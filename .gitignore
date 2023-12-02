@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# other
+src-tauri/gen/*
+src-tauri/target/*
