@@ -27,14 +27,14 @@ export namespace book_data {
       }
    }
    /// 通过name 获得 正确的key
-   export const book_key = (name: string): string => {
+   export const make_book_key = (name: string): string => {
       return creat_key([StoreKey.Book, SotreBookKey.Data, name]);
    }
    /// 消除key的前缀book:data 获取后面的 单词本名
    export const get_name_from_key = (key: string): string => {
       return key.substring(creat_key([StoreKey.Book, SotreBookKey.Data]).length + 1)
    }
-   /// 获取所有单词本的key
+   /// 获取所有单词本的key 根据当前sotre存储
    export const get_book_keys = async (): Promise<string[]> => {
       return new Promise<string[]>((resolve, reject) => {
          store.keys()
@@ -64,6 +64,10 @@ export namespace book_data {
       creat_book:(name: string)=>void,// 创建一个单词数
       delete_book:(name: string)=>void,// 删除一本单词数
       // get_book:(name: string)=>StoreValue<StoreBookData>,// 获取一本单词书的数据
+      get_all_book_name():string[],//获取所有书名
+      get_all_key():string[],//获取所有单词本的key 根据当前变量store_books.value
+      put_word(name:string, word:BookWordMes,is_replace:boolean):void,// 把单词推进指定的单词本, is_replace 若以存在是否替换
+      put_word_list(name:string, word_list:book_data.StoreBookData["word_list"],is_replace:boolean):void,//把 大量单词 推进指定的单词本, is_replace 若以存在是否替换
    } = {
       value: (()=>{//加载所有已经存在的单词本
          (async ()=>{
@@ -77,22 +81,40 @@ export namespace book_data {
          return {}
       })(),
       creat_book(name:string){
-         const key = book_key(name);
+         const key = make_book_key(name);
          store.has(key).then(v => {
             if (v) {//重复
                Toast.show("名字重复");
             } else {//不重复
                store_books.value[name] = new StoreValue<StoreBookData>(key,
                   ()=>default_store_book_data(name));
+               store.save()
             }
          })
       },
       delete_book(name: string){
-         const key = book_key(name);
+         const key = make_book_key(name);
          store.delete(key)
             .then(v => {//删除成功
                delete store_books.value[name];
             })
+      },
+      get_all_book_name():string[]{
+         return Object.keys(store_books.value) 
+      },
+      get_all_key():string[]{
+         return this.get_all_book_name().map(v=>make_book_key(v))
+      },
+      put_word(name:string, word:BookWordMes,is_replace:boolean){
+         // 虽然可以只写一个if,但是可读性更加重要
+         if(this.value[name].value.word_list[word.word]==undefined){//不存在
+            this.value[name].value.word_list[word.word]=word
+         }else if(is_replace){//存在,嘿嘿,但是可以替换
+            this.value[name].value.word_list[word.word]=word
+         }
+      },
+      put_word_list(name:string, word_list:book_data.StoreBookData["word_list"],is_replace:boolean){
+         Object.values(word_list).forEach(word=>this.put_word(name,word,is_replace))
       }
    }
 }

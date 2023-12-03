@@ -3,6 +3,7 @@ import PageHome from "./page/PageHome";
 import PageRoot from "./PageRoot";
 import PageGate from "./page/PageHome/PageGate";
 import PageMyself from "./page/PageHome/PageMyself";
+import PageParse from "./page/PageParse";
 
 
 function App() {
@@ -22,6 +23,7 @@ const MyRoutes = () => {
                <Route path="/home/gate" element={<PageGate />} />
                <Route path="/home/myself" element={<PageMyself />} />
             </Route>
+            <Route path="/parse/:name" element={<PageParse />} />
          </Route>
       </Routes>
    )

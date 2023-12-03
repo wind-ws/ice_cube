@@ -1,9 +1,10 @@
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { book_data } from "../tool/sotre/store_book";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
-   keys: string[],/// 单词本的keys
+   names: string[],/// 单词本的name
    index: number,  /// 指定的key
 }
 
@@ -17,11 +18,16 @@ type Props = {
 ///   删除单词本(需要弹出确认框)
 ///   繁殖(通过筛选器从当前单词本筛选出部分单词,将这些单词 移动进入 其他单词本)
 ///   筛选删除单词(通过筛选器删除当前单词本中的部分单词)
-const ComBookCard = ({ keys, index }: Props) => {
-   const key = keys[index]
-   const name = book_data.get_name_from_key(key);
-
-   return (<>
+const ComBookCard = ({ names, index }: Props) => {
+   const navigate = useNavigate();
+   const name = names[index]
+   const add=()=>{
+      navigate(`/parse/${name}`);
+   }
+   const _delete=()=>{
+      
+   }
+   return (<div className="max-w-[40%]">
       <Dropdown>
          <DropdownTrigger>
             <Card isPressable fullWidth>
@@ -44,15 +50,10 @@ const ComBookCard = ({ keys, index }: Props) => {
             </DropdownItem>
          </DropdownMenu>
       </Dropdown>
-   </>)
+   </div>)
 }
 
-const add=()=>{
 
-}
-const copy=()=>{
-
-}
 
 
 export default ComBookCard;
