@@ -18,7 +18,7 @@ const PageMyself = () => {
    return (
       <>
          <Button onPress={() => {
-            book_data.creat_book("我操!这是一个超jb长的名字啊啊啊啊啊啊啊啊啊啊啊啊!");
+            book_data.store_books.creat_book("我操!这是一个超jb长的名字啊啊啊啊啊啊啊啊啊啊啊啊!");
          }} >new a book</Button>
          <div>
             {

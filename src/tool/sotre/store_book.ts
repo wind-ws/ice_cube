@@ -1,7 +1,6 @@
 import { Toast } from "antd-mobile"
 import { StoreKey, StoreValue, creat_key, store } from "../store"
 import { BookWordMes, GlobalWordMes, default_golbal_word_mes } from "../word"
-import { useRef } from "react"
 
 
 /// 子分区
@@ -19,6 +18,12 @@ export namespace book_data {
       book_name: string, //书名
       word_list: {//单词列表
          [word: string]: BookWordMes
+      }
+   }
+   const default_store_book_data=(name: string):StoreBookData=>{
+      return {
+         book_name:name,
+         word_list:{}
       }
    }
    /// 通过name 获得 正确的key
@@ -42,45 +47,53 @@ export namespace book_data {
       })
    }
    /// 通过key 获取一本单词书的实际存储数据
-   export const get_book = async (key: string): Promise<StoreBookData|null> => {
-      return new Promise<StoreBookData|null>((resolve, reject) => {
+   /// #abolish
+   export const get_book = async (key: string): Promise<StoreBookData | null> => {
+      return new Promise<StoreBookData | null>((resolve, reject) => {
          store.get<StoreBookData>(key)
             .then(book => resolve(book))
-            .catch(e=>reject(e))
+            .catch(e => reject(e))
       })
    }
 
-   /// 创建一本单词书
-   export const creat_book = (name: string) => {
-      //检查没有重复的书名
-      const key = book_key(name);
-      store.has(key).then(v => {
-         if (v) {//重复
-            Toast.show("名字重复");
-         } else {//不重复
-            store.set(key, <StoreBookData>{
-               book_name: name,
-               word_list: {}
-            });
-         }
-      })
 
-   }
-
-   /// 删除一本单词数
-   export const delete_book = (name: string) => {
-      const key = book_key(name);
-      store.delete(key)
-         .then(v => {
-            //删除成功
-         })
-   }
-   /// 所有单词数的实体状态
-   export const store_books:{
-      value:{[book_name:string]:StoreValue<StoreBookData>}
+   /// 所有单词书的实体状态
+   export const store_books: {
+      value: { [book_name: string]: StoreValue<StoreBookData> },
+      // add_value:(name: string)=>void,// 给 value 添加一个book
+      creat_book:(name: string)=>void,// 创建一个单词数
+      delete_book:(name: string)=>void,// 删除一本单词数
+      // get_book:(name: string)=>StoreValue<StoreBookData>,// 获取一本单词书的数据
    } = {
-      value:{},
-      
+      value: (()=>{//加载所有已经存在的单词本
+         (async ()=>{
+            const keys = await get_book_keys();
+            keys.forEach(key => {
+               const name = get_name_from_key(key);
+               store_books.value[name] = new StoreValue<StoreBookData>(key,
+                  ()=>default_store_book_data(name));
+            })
+         })()
+         return {}
+      })(),
+      creat_book(name:string){
+         const key = book_key(name);
+         store.has(key).then(v => {
+            if (v) {//重复
+               Toast.show("名字重复");
+            } else {//不重复
+               store_books.value[name] = new StoreValue<StoreBookData>(key,
+                  ()=>default_store_book_data(name));
+            }
+         })
+      },
+      delete_book(name: string){
+         const key = book_key(name);
+         store.delete(key)
+            .then(v => {//删除成功
+               delete store_books.value[name];
+            })
+      }
    }
 }
 
@@ -102,7 +115,7 @@ export namespace book_golbal {
       set_note: (word: string, note: string) => void, // 修改note
       set_star: (word: string, star: boolean) => void,// 修改star
    } = {
-      value: new StoreValue<StoreGolbal>(golbal_key(),()=>{return{}}),
+      value: new StoreValue<StoreGolbal>(golbal_key(), () => { return {} }),
       set_note: (word: string, note: string) => {
          maybe_init(word);
          store_golbal.value.value[word].note = note;

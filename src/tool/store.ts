@@ -25,11 +25,12 @@ type Default<T> = ()=> T;
 
 
 /// 一个对应key存储的value
+/// 这个包装类 可以 自动初始化存储,自动保存到磁盘
 export class StoreValue<V> {
    private _key: string;//它的key
    private _value: V;//sotre中实际存储的值
    public auto_save: boolean = false;//修改value是否自动存储,默认不自动存储
-   /// _default : 传入一个生成value的默认值
+   /// _default : 传入一个生成value的默认值 , 如果key在sotre中不存在才会使用默认值
    /// 不知道为什么Ts的类型推断不能用V约束存在Default来达到通过V泛型调用default函数
    constructor(key: string,_default:Default<V>, auto_save?: boolean) {
       this._key = key;
@@ -51,6 +52,7 @@ export class StoreValue<V> {
          this.save();
       }
    }
+   /// ! 注意 : 如果你没有调用这个函数,你 所有的修改都不会被保存到store(如果调用正确的store.set会保存到sotre)
    public save(){
       store.set(this._key,this._value);
       store.save();//! 注意 : save会存储所有的key
