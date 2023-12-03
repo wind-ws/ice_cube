@@ -1,37 +1,55 @@
-import { Button } from "@nextui-org/react"
-import { Tabs, Tab } from "@nextui-org/react";
-
+import { Badge, TabBar } from 'antd-mobile'
+import { Outlet, useNavigate ,useLocation} from "react-router-dom";
 
 const PageHome = () => {
-
+   const navigate = useNavigate();
+   const location = useLocation();
+   
+   /// 
+   const Body = () => {
+      return (
+         <div style={{ flex: 1, display: "flex", overflow: "auto" }}>
+            {/* <div className="block">
+               {
+                  Array
+                     .from({ length: 20 }, (_, index) => index + 1)
+                     .map(v => <div key={v} className=" w-full bg-slate-300 h-12">{v}</div>)
+               }
+            </div> */}
+            <div className='block w-full h-full'>
+               <Outlet />
+            </div>
+         </div>
+      )
+   }
    /// 底部导航栏
    const BottomNav = () => {
+      const tabs = [
+         {
+            key: '/home/gate',
+            title: '大门',
+         },
+         {
+            key: '/home/myself',
+            title: '我自己哦!',
+         },]
       return (
-         <>
-            <div className="fixed bottom-0 bg-blue-200 w-full h-12">
-               <Tabs key="0" aria-label="Tabs sizes" classNames={{tabList:"w-full gap-6 w-full relative rounded-none p-0 border-b border-divider  "}}>
-                  <Tab key="photos" title="Photos" />
-                  <Tab key="music" title="Music" />
-                  <Tab key="videos" title="Videos" />
-               </Tabs>
-            </div>
-            {/* 占位元素 */}
-            <div className="w-full h-12"></div>
-         </>
+         <div className=" bg-orange-200 w-full h-12"
+            style={{ flex: 0 }}>
+            <TabBar activeKey={location.pathname} onChange={value => {navigate(value)}}>
+               {tabs.map(item => (
+                  <TabBar.Item key={item.key} title={item.title} />
+               ))}
+            </TabBar>
+         </div>
       )
    }
 
    return (
-      <>
-         <div className=" top-0 bg-slate-300 w-full ">
-            {
-               Array
-                  .from({ length: 20 }, (_, index) => index + 1)
-                  .map(v => <div key={v} className="w-full bg-slate-300 h-12">{v}</div>)
-            }
-         </div>
+      <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+         <Body></Body>
          <BottomNav></BottomNav>
-      </>
+      </div>
    )
 }
 export default PageHome;
