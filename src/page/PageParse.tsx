@@ -15,6 +15,7 @@ const PageParse = () => {
    const save=()=>{//保存进单词本
       const word_list = parse(str);
       book_data.store_books.put_word_list(name,word_list,false);
+      book_data.store_books.value[name].save();
    }
    
    return (<div>

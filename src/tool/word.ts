@@ -3,6 +3,9 @@
 
 
 /// 共享的单词信息 , 不区分单词本
+
+import { now } from "./time";
+
 /// 每一个单词的类型
 export type GlobalWordMes = {
    word:string; // 单词本身
@@ -28,14 +31,12 @@ export type BookWordMes = {
 }
 /// BookWordMes 的默认值
 export const default_book_word_mes = (word:string):BookWordMes=>{
-   const timestamp: number = Date.parse(new Date().toString());
-
    return <BookWordMes>{
       word:word,
       yes:0,
       no:0,
       score:0,
-      last_time:timestamp
+      last_time:now()
    }
 }
 

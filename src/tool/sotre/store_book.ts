@@ -20,6 +20,9 @@ export namespace book_data {
          [word: string]: BookWordMes
       }
    }
+   
+   export type WordList = book_data.StoreBookData["word_list"];
+
    const default_store_book_data=(name: string):StoreBookData=>{
       return {
          book_name:name,
@@ -67,7 +70,8 @@ export namespace book_data {
       get_all_book_name():string[],//获取所有书名
       get_all_key():string[],//获取所有单词本的key 根据当前变量store_books.value
       put_word(name:string, word:BookWordMes,is_replace:boolean):void,// 把单词推进指定的单词本, is_replace 若以存在是否替换
-      put_word_list(name:string, word_list:book_data.StoreBookData["word_list"],is_replace:boolean):void,//把 大量单词 推进指定的单词本, is_replace 若以存在是否替换
+      put_word_list(name:string, word_list:WordList,is_replace:boolean):void,//把 大量单词 推进指定的单词本, is_replace 若以存在是否替换
+      get_all_word_mes(name: string):WordList,//获取所有单词信息
    } = {
       value: (()=>{//加载所有已经存在的单词本
          (async ()=>{
@@ -89,6 +93,7 @@ export namespace book_data {
                store_books.value[name] = new StoreValue<StoreBookData>(key,
                   ()=>default_store_book_data(name));
                store.save()
+               Toast.show("创建成功");
             }
          })
       },
@@ -113,8 +118,11 @@ export namespace book_data {
             this.value[name].value.word_list[word.word]=word
          }
       },
-      put_word_list(name:string, word_list:book_data.StoreBookData["word_list"],is_replace:boolean){
+      put_word_list(name:string, word_list:WordList,is_replace:boolean){
          Object.values(word_list).forEach(word=>this.put_word(name,word,is_replace))
+      },
+      get_all_word_mes(name:string):WordList{
+         return this.value[name].value.word_list
       }
    }
 }
@@ -136,6 +144,8 @@ export namespace book_golbal {
       value: StoreValue<StoreGolbal>,//存储状态的值
       set_note: (word: string, note: string) => void, // 修改note
       set_star: (word: string, star: boolean) => void,// 修改star
+      get_star(word: string): boolean,//获取单词是否是star, 单词不存在就返回flase
+      get_note(word: string): string,//获得单词的note , 单词不存在则返回 ""
    } = {
       value: new StoreValue<StoreGolbal>(golbal_key(), () => { return {} }),
       set_note: (word: string, note: string) => {
@@ -145,6 +155,21 @@ export namespace book_golbal {
       set_star: (word: string, star: boolean) => {
          maybe_init(word);
          store_golbal.value.value[word].star = star;
+      },
+      get_star(word:string):boolean {
+         if(store_golbal.value.value[word]){//存在
+            return store_golbal.value.value[word].star
+         } else {//不存在
+            return false
+         }
+         
+      },
+      get_note(word: string): string{
+         if(store_golbal.value.value[word]){//存在
+            return store_golbal.value.value[word].note
+         } else {//不存在
+            return ""
+         }
       }
    };
 

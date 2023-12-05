@@ -27,7 +27,7 @@ const ComBookCard = ({ names, index }: Props) => {
    const _delete=()=>{
       
    }
-   return (<div className="max-w-[40%]">
+   return (<div className="w-full">
       <Dropdown>
          <DropdownTrigger>
             <Card isPressable fullWidth>
