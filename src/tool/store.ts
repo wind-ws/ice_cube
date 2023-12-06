@@ -11,6 +11,7 @@ export enum StoreKey {
    Setting = "setting",
    State = "state",
    Book = "book",
+   Filter = "filter",
 }
 
 

@@ -8,7 +8,7 @@ const translate_audio_url =
    (word:string):string => `/translation_audio?audio=${word}&type=2`;
 
 /// 翻译后返回的类型 (只取了需要的部分)
-type TranslateType = {
+export type TranslateType = {
    key: string,//单词本身
    paraphrase:string,//释义(means的整合)
    means:{//更加精准的释义()
@@ -46,9 +46,6 @@ export const translate = async (word:string):Promise<TranslateType> =>{
 
 
 
-/// 为了顺畅的背单词, 网络io流需要提前处理
-/// 翻译队列, 当翻译队列的词汇少于x后,进行翻译n个单词填充进翻译队列
-const translation_queue :TranslateType[] = [];
 
 
 

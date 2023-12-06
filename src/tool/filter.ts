@@ -9,6 +9,7 @@
 
 import { get_random_int } from "./random";
 import { book_data, book_golbal } from "./sotre/store_book"
+import { StoreKey, StoreValue, creat_key } from "./store";
 import { day, now } from "./time";
 import { BookWordMes } from "./word";
 
@@ -28,7 +29,7 @@ export type StoreFilter = {
    | ["largest"] //尽可能寻找最高分的 , 过滤低优先级
    ,
    time_range: null //时间限制 ,单位天
-   | ["in", number, number] // 满足[a,b]时间区间的单词, a,b表示多少天没有遇见过,最低是0, 所以必须满足a>b ,例如 [7,0] : 范围是 7天前遇到的单词 到 现在遇到的单词
+   | ["in", number, number] // 满足[a,b]时间区间的单词, a,b表示多少天没有遇见过,最低是0, 所以必须满足a>b ,例如 [7,0] : 范围是 7天前到现在 这个时间范围 遇到的单词
    | ["recent"] // 尽可能是最近遇到过的单词
    | ["ago"] // 尽可能是 很久没遇到过的单词
    ,
@@ -81,7 +82,8 @@ const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWo
       }
    }
 
-   if (ret_word_list.length > filter.max_word_num) {//返回的过滤单词量超过限制,进行 过滤低优先级 的事件,若还超过则进行随机删除
+   /// filter.max_word_num==0 表示 无上限限制
+   if (filter.max_word_num!=0 && ret_word_list.length > filter.max_word_num) {//返回的过滤单词量超过限制,进行 过滤低优先级 的事件,若还超过则进行随机删除
       if (filter.score_range != null && filter.time_range != null) {
          /// 当 x>y 时 希望 x排在y前面就 true 
          const sort_fn = (a: BookWordMes, b_score: boolean, b: BookWordMes, b_time: boolean) => {
@@ -147,4 +149,20 @@ export const filters_word_list = (filters: StoreFilter[], word_list: BookWordMes
    return ret_word_list
 }
 
+export const filter_key = creat_key([StoreKey.Filter])
+
+/// store_filter 的实体状态
+export const store_filter:{
+   value:StoreValue<{[name:string]:StoreFilter}>,
+   get_filter(name:string):StoreFilter,
+   set_filter(filter:StoreFilter):void,
+}={
+   value: new StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true),//并非高频的修改,开启自动存储
+   get_filter(name:string):StoreFilter{
+      return this.value.value[name] 
+   },
+   set_filter(filter:StoreFilter):void{
+      this.value.value[filter.name] = filter;
+   }
+}
 

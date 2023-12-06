@@ -4,6 +4,8 @@ import PageRoot from "./PageRoot";
 import PageGate from "./page/PageHome/PageGate";
 import PageMyself from "./page/PageHome/PageMyself";
 import PageParse from "./page/PageParse";
+import PageRecite from "./page/PageRecite";
+import PageCreateFilter from "./page/PageCreateFilter";
 
 
 function App() {
@@ -24,6 +26,8 @@ const MyRoutes = () => {
                <Route path="/home/myself" element={<PageMyself />} />
             </Route>
             <Route path="/parse/:name" element={<PageParse />} />
+            <Route path="/recite" element={<PageRecite />} />
+            <Route path="/create_filter" element={<PageCreateFilter />} />
          </Route>
       </Routes>
    )

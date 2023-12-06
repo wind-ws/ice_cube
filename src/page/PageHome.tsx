@@ -9,13 +9,6 @@ const PageHome = () => {
    const Body = () => {
       return (
          <div style={{ flex: 1, display: "flex", overflow: "auto" }}>
-            {/* <div className="block">
-               {
-                  Array
-                     .from({ length: 20 }, (_, index) => index + 1)
-                     .map(v => <div key={v} className=" w-full bg-slate-300 h-12">{v}</div>)
-               }
-            </div> */}
             <div className='block w-full h-full'>
                <Outlet />
             </div>

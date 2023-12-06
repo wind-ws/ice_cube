@@ -3,9 +3,11 @@ import { book_data } from "../../tool/sotre/store_book";
 import { useEffect, useState, useRef } from "react";
 import ComBookCard from "../../component/ComBookCard";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 
 const PageMyself = () => {
    const [names, _] = useState<string[]>(book_data.store_books.get_all_book_name());
+   const navigate = useNavigate();
 
    const ComBookCards = ({ names }: { names: string[] }) => {
       const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -46,6 +48,7 @@ const PageMyself = () => {
    return (
       <>
          <div>
+            <Button onPress={()=>navigate("/create_filter")}>创建过滤器</Button>
             <ComBookCards names={names}></ComBookCards>
          </div>
       </>

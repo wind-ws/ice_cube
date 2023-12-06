@@ -129,9 +129,7 @@ export namespace book_data {
 
 export namespace book_golbal {
 
-   export const golbal_key = (): string => {
-      return creat_key([StoreKey.Book, SotreBookKey.Golbal]);
-   }
+   export const golbal_key = creat_key([StoreKey.Book, SotreBookKey.Golbal])
 
    /// 对应的key : book:golbal
    type StoreGolbal = {
@@ -147,7 +145,7 @@ export namespace book_golbal {
       get_star(word: string): boolean,//获取单词是否是star, 单词不存在就返回flase
       get_note(word: string): string,//获得单词的note , 单词不存在则返回 ""
    } = {
-      value: new StoreValue<StoreGolbal>(golbal_key(), () => { return {} }),
+      value: new StoreValue<StoreGolbal>(golbal_key, () => ({})),
       set_note: (word: string, note: string) => {
          maybe_init(word);
          store_golbal.value.value[word].note = note;

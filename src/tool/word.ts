@@ -4,6 +4,7 @@
 
 /// 共享的单词信息 , 不区分单词本
 
+import { get_random_int } from "./random";
 import { now } from "./time";
 
 /// 每一个单词的类型
@@ -40,14 +41,30 @@ export const default_book_word_mes = (word:string):BookWordMes=>{
    }
 }
 
+/// 分数越高加的越少,越低加的越多
+/// 加点随机数,好玩一点
 const score_add = (score:number):number =>{
    //要求取整运算
-   return score
+   const f= (x:number):number=>Math.ceil(-((99)/(2000))*x +((101)/(2)));
+   if(score>1000){
+      return 1+get_random_int(0,2)
+   } else if(score< -1000){
+      return 100+get_random_int(0,100)
+   }
+   return f(score)+get_random_int(0,10)
 }
+/// 分数越高减的越多,越低减的越少
+/// 注意:这个函数返回的是正数,是你应该减去的数
+/// 嘻嘻,随机数多减一点
 const score_subtract = (score:number):number =>{
    //要求取整运算
-   
-   return score
+   const f= (x:number):number=>Math.ceil(-((99)/(2000))*x +((101)/(2)));
+   if(score>1000){
+      return 100+get_random_int(0,200)
+   } else if(score< -1000){
+      return 1+get_random_int(0,5)
+   }
+   return -f(score)+101+get_random_int(0,20) 
 }
 
 
