@@ -1,4 +1,4 @@
-import { Button, Input, Radio, RadioGroup, Slider, Switch } from "@nextui-org/react"
+import { Button, Input, Radio, RadioGroup, Slider } from "@nextui-org/react"
 import { useState } from "react"
 import { StoreFilter, store_filter } from "../tool/filter";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,7 @@ const PageCreateFilter = () => {
          yes_no: yes_no
       }
       store_filter.set_filter(filter);
+      store_filter.value.save();
       Toast.show("保存成功")
    }
    return (<>

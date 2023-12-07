@@ -156,6 +156,7 @@ export const store_filter:{
    value:StoreValue<{[name:string]:StoreFilter}>,
    get_filter(name:string):StoreFilter,
    set_filter(filter:StoreFilter):void,
+   get_all_filter_name():string[],
 }={
    value: new StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true),//并非高频的修改,开启自动存储
    get_filter(name:string):StoreFilter{
@@ -163,6 +164,9 @@ export const store_filter:{
    },
    set_filter(filter:StoreFilter):void{
       this.value.value[filter.name] = filter;
+   },
+   get_all_filter_name():string[]{
+      return Object.keys(this.value.value)
    }
 }
 
