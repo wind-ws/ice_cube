@@ -27,6 +27,7 @@ type Default<T> = () => T;
 
 /// 一个对应key存储的value
 /// 这个包装类 可以 自动初始化存储,自动保存到磁盘
+/// todo : 现在我需要让这个 包装类 保证 修改值一定会执行 store.set ,存储进store里面,至于是否存储进磁盘,交给save函数 (频繁调用save并不好)
 export class StoreValue<V extends object> {
    private _key: string;//它的key
    private _value: V;//sotre中实际存储的值

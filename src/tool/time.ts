@@ -9,5 +9,16 @@ export const day = (time: number): number => {
    return day
 }
 
+/// 获取年月日
+export const get_ymd = (time: number): string => {
+   const date = new Date(time);
+
+   const year = date.getFullYear();
+   const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份是从 0 开始的，需要加 1
+   const day = String(date.getDate()).padStart(2, '0');
+
+   return `${year}-${month}-${day}`;
+}
+
 
 

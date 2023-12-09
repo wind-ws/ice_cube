@@ -45,6 +45,7 @@ export const parse = (str: string):book_data.WordList=>{
          word_list[word]=default_book_word_mes(word);
       }
    })
+   delete word_list[""];//删除空的
    return word_list;
 }
 

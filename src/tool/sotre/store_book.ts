@@ -5,7 +5,7 @@ import { BookWordMes, GlobalWordMes, default_golbal_word_mes } from "../word"
 
 /// 子分区
 enum SotreBookKey {
-   BookMes = "book_mes", //所有单词本的信息
+   // BookMes = "book_mes", //所有单词本的信息
    Golbal = "golbal", //存储单词的全局信息
    Data = "data",// 这个key是"book:data:<单词本名>",存储实际的单词本数据
 }
@@ -49,15 +49,6 @@ export namespace book_data {
             .catch(e => reject(e))
       })
    }
-   /// 通过key 获取一本单词书的实际存储数据
-   /// #abolish
-   export const get_book = async (key: string): Promise<StoreBookData | null> => {
-      return new Promise<StoreBookData | null>((resolve, reject) => {
-         store.get<StoreBookData>(key)
-            .then(book => resolve(book))
-            .catch(e => reject(e))
-      })
-   }
 
 
    /// 所有单词书的实体状态
@@ -72,6 +63,8 @@ export namespace book_data {
       put_word(name:string, word:BookWordMes,is_replace:boolean):void,// 把单词推进指定的单词本, is_replace 若以存在是否替换
       put_word_list(name:string, word_list:WordList,is_replace:boolean):void,//把 大量单词 推进指定的单词本, is_replace 若以存在是否替换
       get_all_word_mes(name: string):WordList,//获取所有单词信息
+      delete_word(name:string,word:string):void,//删除指定的单词本中的单词
+      delete_all_word(name:string):void,//删除指定单词本的所有单词
    } = {
       value: (()=>{//加载所有已经存在的单词本
          (async ()=>{
@@ -123,6 +116,12 @@ export namespace book_data {
       },
       get_all_word_mes(name:string):WordList{
          return this.value[name].value.word_list
+      },
+      delete_word(name:string,word:string){
+         delete this.value[name].value.word_list[word];
+      },
+      delete_all_word(name:string){
+         this.value[name].value.word_list = {};
       }
    }
 }
@@ -157,7 +156,8 @@ export namespace book_golbal {
       get_star(word:string):boolean {
          if(store_golbal.value.value[word]){//存在
             return store_golbal.value.value[word].star
-         } else {//不存在
+         } else {//不存在 ,则初始化
+            this.set_star(word,false);
             return false
          }
          

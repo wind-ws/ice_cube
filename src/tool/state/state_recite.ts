@@ -23,25 +23,20 @@ const default_state_recite = ():StateRecite=>{
       index:0,
    }
 }
-export type StateReciteFn = {
-   next_word(): BookWordMes | "over",/// 获取下一个单词,若已经超过最后一个单词,则返回over
-   // set_star(star:boolean):void,//设置当前单词的star
-}
 
 
 const state_recite_key = creat_key([StoreKey.State,"recite"]);
 
 /// 一个存储状态
+/// todo : 这个并不完美,需要调整
 export const sotre_state_recite:{
    value:StoreValue<StateRecite>,
    translation_map:{[word:string]:TranslateType}, //翻译存储
    index_translation: number,//翻译到的下标
    over_load(book_name: string, filters: StoreFilter[]):void,/// 重新加载value,状态初始化
-   next_word():[BookWordMes,TranslateType] | "over",// 获取下一个单词,若没有下一个单词就返回over表示结束
-   // get_translation(word_name:string):TranslateType,//获取一个单词的翻译
-   filters:string[]
+   next_word():BookWordMes | "over",// 获取下一个单词,若没有下一个单词就返回over表示结束
+   get_translation(word_name:string):TranslateType,//获取一个单词的翻译
 } = {
-   filters:[],
    value:new StoreValue(state_recite_key,default_state_recite),
    translation_map:{},
    index_translation: 0,
@@ -52,6 +47,8 @@ export const sotre_state_recite:{
          word_list: Object.values(book_data.store_books.get_all_word_mes(book_name)),
          index: 0,
       };
+      this.index_translation = 0;
+      this.translation_map = {};
       this.value.value = state_recite;
       // 过滤
       this.value.value.word_list = filters_word_list(this.value.value.filters.map(v=>store_filter.get_filter(v)), this.value.value.word_list)
@@ -59,7 +56,7 @@ export const sotre_state_recite:{
       this.value.value.word_list = this.value.value.word_list.sort((a, b) => (get_random_int(0, 1) ? -1 : 1))
 
    },
-   next_word():[BookWordMes,TranslateType] | "over"{
+   next_word():BookWordMes | "over"{ //由于翻译作为异步流,立刻返回很可能是undefined
       const len = this.value.value.word_list.length;
       const index = this.value.value.index;
       const translation_map = ()=>{//加载翻译
@@ -73,7 +70,7 @@ export const sotre_state_recite:{
             })
          })
       }
-      if(index == len-1){/// 当前index已经是word_list的上限,无法获取下一个
+      if(index == len){/// 当前index已经是word_list的上限,无法获取下一个
          return "over";
       }
       if(this.index_translation < index){//防止内存刷新(软件重新加载),导致this.index_translation==0
@@ -82,18 +79,19 @@ export const sotre_state_recite:{
       if(this.index_translation <= index + 5){//提前5个 触发翻译
          translation_map()
       }
+      const word = this.value.value.word_list[index];
       this.value.value.index++;
-      const word = this.value.value.word_list[this.value.value.index];
-      return [word,this.translation_map[word.word]]
+      return word
    },
-   // get_translation(word_name:string):TranslateType{
-   //    if(this.translation_map[word_name]==undefined){
-   //       throw new Error("不应该出现找不到翻译的问题!除非你没网!");
-   //    }else{
-   //       return this.translation_map[word_name]
-   //    }
-   // }
+   get_translation(word_name:string):TranslateType{
+      if(this.translation_map[word_name]==undefined){
+         throw new Error("不应该出现找不到翻译的问题!除非你没网!或异步流还未加载完成");
+      }else{
+         return this.translation_map[word_name]
+      }
+   }
 };
+
 
 
 
