@@ -1,5 +1,7 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { DeepObject, createDeepProxy } from "./proxy";
+import { useRef, useSyncExternalStore } from "react";
+
 
 
 /// 统一使用一个存储点
@@ -34,16 +36,17 @@ export class StoreValue<V extends object> {
    private _value: DeepObject<V>;//sotre中实际存储的值
    public auto_set: boolean = false;//修改value是否自动存储到store,默认不自动存储
    public auto_save: boolean = false;//修改value是否自动存储到磁盘,默认不自动存储
+   private listeners: any = {};// #abolish
    /// _default : 传入一个生成value的默认值 , 如果key在sotre中不存在才会使用默认值
    /// 不知道为什么Ts的类型推断不能用V约束存在Default来达到通过V泛型调用default函数
    constructor(key: string, _default: Default<V>, auto_set: boolean = false, auto_save: boolean = false) {
       this._key = key;
-      this._value = createDeepProxy(_default(), (v)=>this.ChangeHandler(v));
+      this._value = createDeepProxy(_default(), (v) => this.ChangeHandler(v));
       store.get<V>(key).then(v => {
          if (!v) {//值不存在,初始化sotre
             store.set(key, this._value);
          } else {
-            this._value = createDeepProxy(v, (v)=>this.ChangeHandler(v));
+            this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));
          }
       });
       this.auto_set = auto_set;
@@ -52,8 +55,8 @@ export class StoreValue<V extends object> {
    get key(): string { return this._key }
    get value(): DeepObject<V> { return this._value }
    set value(v: V) {
-      this._value = createDeepProxy(v, (v)=>this.ChangeHandler(v));
-      if(this.auto_set){
+      this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));
+      if (this.auto_set) {
          store.set(this._key, this._value);
       }
       if (this.auto_save) {
@@ -68,9 +71,10 @@ export class StoreValue<V extends object> {
 
    /// 值被修改后触发
    private ChangeHandler(updatedObject: DeepObject<V>) {
-      console.log(`被修改的key<${this._key}>,被修改的内容如下`);      
+      console.log(`被修改的key<${this._key}>,被修改的内容如下`);
       console.log(updatedObject);
-      if(this.auto_set){
+
+      if (this.auto_set) {
          store.set(this._key, this._value);
       }
       if (this.auto_save) {
@@ -78,6 +82,84 @@ export class StoreValue<V extends object> {
       }
    }
 
+   /// #abolish
+   public subscribe() {
+      // return (callback: () => void):() => void => {            
+      //    this.listeners.add(callback);
+      //    return ()=>{
+      //       this.listeners.delete(callback);
+      //    }
+      // }
+   }
+   /// #abolish
+   public render() {
+      // this.listeners.forEach((listener) => {
+      //    listener();
+      // })
+   }
+   /// target:必须是 _value 内部的值
+   /// prop是target的属性名
+   /// 现在已经通过Proxy达到存储和变量同步, 这个函数要完成的是 变量和渲染同步
+   public useState<T extends object, K extends keyof T>(target: T, prop: K): [T[K], (v: T[K]) => void] {
+      if (this.listeners[prop] == undefined) {
+         this.listeners[prop] = new Set<() => void>();
+      }
+      const listeners = this.listeners[prop];
+      const val = Reflect.get(target, prop)
+      const subscribe = (callback: () => void): () => void => {
+         this.listeners[prop].add(callback);
+         return () => {
+            this.listeners[prop].delete(callback);
+         }
+      }
+      const getSnapshot = () => {
+         console.log(prop);
+         return val
+      }
+      const render = () => {
+         this.listeners[prop].forEach((_listener: () => void) => {
+            _listener();
+         })
+      }
+      const a = useSyncExternalStore(subscribe,getSnapshot);
+      const set_a = (value: T[K]) => {
+         Reflect.set(target, prop, value);
+         render();
+      }
+      return [a, set_a]
+   }
+
+}
+
+export const use_state = <T extends object, K extends keyof T>(target: T, prop: K):DeepObject<{
+   listeners:Set<()=>void>,
+   subscribe:(callback: () => void)=> () => void,
+
+}> =>{
+   const self = {
+      listeners: new Set<()=>void>(),
+      subscribe(callback:()=>void){
+         self.listeners.add(callback)
+         return ()=>{
+            self.listeners.delete(callback)
+         }
+      },
+      get(){
+         return Reflect.get(target, prop)
+      },
+      getSnapshot(){
+         return self.get()
+      },
+      render(){
+         self.listeners.forEach((_listener: () => void) => {
+            _listener();
+         })
+      },
+      get_state(){
+         return useSyncExternalStore(self.subscribe,self.getSnapshot)
+      }
+   }
+   return self
 }
 
 

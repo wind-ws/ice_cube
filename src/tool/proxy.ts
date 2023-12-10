@@ -61,7 +61,7 @@ export type ChangeHandler<T> = (updatedObject: DeepObject<T>) => void;
 export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandler<T>): DeepObject<T> => {
    const handler: ProxyHandler<T> = {
       get(target, prop, receiver) {
-         const value = Reflect.get(target, prop, receiver);         
+         const value = Reflect.get(target, prop, receiver);    
          if (isObject(value)) {//深层创建Proxy
             // 目前还没有办法去处理对一个对象的属性重复创建 Proxy的方法,因为没法判断这个属性是否已经被代理了
             // 或者把这个玩意的复杂度继续提升,否则只能这样了,一点性能而已,无伤大雅

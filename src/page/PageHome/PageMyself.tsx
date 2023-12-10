@@ -17,7 +17,7 @@ const PageMyself = () => {
       }
       return (<div className="w-full">
          {
-            names.map((name, index) => <div className="inline-block min-w-[40%] max-w-[40%] mx-[5%] my-2">
+            names.map((name, index) => <div key={name} className="inline-block min-w-[40%] max-w-[40%] mx-[5%] my-2">
                <ComBookCard key={name} names={names} index={index} ></ComBookCard>
             </div>)
          }
