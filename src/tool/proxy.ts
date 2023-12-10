@@ -53,20 +53,18 @@ export type DeepObject<T> = {
 };
 
 /// 注意: updatedObject 这个并不是 根部的对象 , 而是被修改的对象
+/// 例如 : obj.a.b.c ,修改 obj.a.b.c=0 ,updateObject是对象b
 export type ChangeHandler<T> = (updatedObject: DeepObject<T>) => void;
 
 /// obj : 需要Proxy的对象
 /// onChange : 当值被修改时触发,对深层对象有用
-/// ! 有问题! 会导致无限循环 , 原因还未找到
-/// ! 可能是 handler.get 会拦截 Reflect.get 导致再次触发handler.get
 export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandler<T>): DeepObject<T> => {
    const handler: ProxyHandler<T> = {
       get(target, prop, receiver) {
-         const value = Reflect.get(target, prop, receiver);
-         console.log(target);
-         
+         const value = Reflect.get(target, prop, receiver);         
          if (isObject(value)) {//深层创建Proxy
-
+            // 目前还没有办法去处理对一个对象的属性重复创建 Proxy的方法,因为没法判断这个属性是否已经被代理了
+            // 或者把这个玩意的复杂度继续提升,否则只能这样了,一点性能而已,无伤大雅
             return createDeepProxy(value as any, onChange);
          }
          return value;
@@ -81,9 +79,6 @@ export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandle
 
    return new Proxy(obj, handler) as DeepObject<T>;
 }
-
-
-
 
 
 

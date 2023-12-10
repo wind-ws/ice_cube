@@ -32,42 +32,47 @@ type Default<T> = () => T;
 export class StoreValue<V extends object> {
    private _key: string;//它的key
    private _value: DeepObject<V>;//sotre中实际存储的值
-   public auto_save: boolean = false;//修改value是否自动存储,默认不自动存储
+   public auto_set: boolean = false;//修改value是否自动存储到store,默认不自动存储
+   public auto_save: boolean = false;//修改value是否自动存储到磁盘,默认不自动存储
    /// _default : 传入一个生成value的默认值 , 如果key在sotre中不存在才会使用默认值
    /// 不知道为什么Ts的类型推断不能用V约束存在Default来达到通过V泛型调用default函数
-   constructor(key: string, _default: Default<V>, auto_save?: boolean) {
+   constructor(key: string, _default: Default<V>, auto_set: boolean = false, auto_save: boolean = false) {
       this._key = key;
-      this._value = createDeepProxy(_default(),this.ChangeHandler);
+      this._value = createDeepProxy(_default(), (v)=>this.ChangeHandler(v));
       store.get<V>(key).then(v => {
          if (!v) {//值不存在,初始化sotre
             store.set(key, this._value);
          } else {
-            // this._value = createDeepProxy(v,this.ChangeHandler);
+            this._value = createDeepProxy(v, (v)=>this.ChangeHandler(v));
          }
       });
-      if (auto_save != undefined) this.auto_save = auto_save;
+      this.auto_set = auto_set;
+      this.auto_save = auto_save;
    }
    get key(): string { return this._key }
    get value(): DeepObject<V> { return this._value }
    set value(v: V) {
-      this._value = createDeepProxy(v,this.ChangeHandler);
-      store.set(this._key, this._value);
+      this._value = createDeepProxy(v, (v)=>this.ChangeHandler(v));
+      if(this.auto_set){
+         store.set(this._key, this._value);
+      }
       if (this.auto_save) {
          this.save();
       }
    }
    /// ! 注意 : 如果你没有调用这个函数,你 所有的修改都不会被保存到store(如果调用正确的store.set会保存到sotre)
-   /// #abolish : 这个包装类具有修改值自动调用sotre.set的能力, save 直接调用 store.save()即可
    public save() {
       store.set(this._key, this._value);
       store.save();//! 注意 : save会存储所有的key
    }
 
    /// 值被修改后触发
-   private ChangeHandler(updatedObject: DeepObject<V>){
-      // console.log(`store<${this._key}>被修改,被修改的部分:`);
+   private ChangeHandler(updatedObject: DeepObject<V>) {
+      console.log(`被修改的key<${this._key}>,被修改的内容如下`);      
       console.log(updatedObject);
-      // store.set(this._key, this._value);
+      if(this.auto_set){
+         store.set(this._key, this._value);
+      }
       if (this.auto_save) {
          this.save();
       }
