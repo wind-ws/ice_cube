@@ -14,16 +14,17 @@ const PageGate = () => {
    // const [default_select_filters,set_default_select_filters] = useState<string[]>(sotre_state_recite.value.value.filters);
    console.log(sotre_state_recite.value.value);
    
-   const default_select_book = use_state(sotre_state_recite.value.value, "book_name");
+   // const default_select_book = use_state(sotre_state_recite.value.value, "book_name");
    
-   const [default_select_filters, set_default_select_filters] = sotre_state_recite.value
-      .useState(sotre_state_recite.value.value,"filters")
-   
+   // const [default_select_filters, set_default_select_filters] = sotre_state_recite.value
+   //    .useState(sotre_state_recite.value.value,"filters")
+   sotre_state_recite.value.set_hook(useState(0))
+   console.log(sotre_state_recite.value.hook[0]);
    
    const [b, set_b] = useState(true);
    if (b) {// 延时后触发渲染,因为 异步流 加载有点慢,这里又是一进来就看的页面,会导致 异步流还未加载完成,就已经渲染完成,内容没有加载成功
       setTimeout(() => {
-         // set_b(false)
+         set_b(false)
       }, 300)
    }
 
@@ -46,8 +47,9 @@ const PageGate = () => {
 
          <Button onPress={start}>开始复习</Button>
          <Select label="选择你将要复习的单词本"
-            selectedKeys={default_select_book ? [default_select_book] : undefined}
-            onSelectionChange={v => set_default_select_book(Array.from(v).map(v => v.toString())[0])}>
+            selectedKeys={sotre_state_recite.value.value.book_name ? [sotre_state_recite.value.value.book_name] : undefined}
+            // defaultSelectedKeys={sotre_state_recite.value.value.book_name ? [sotre_state_recite.value.value.book_name] : undefined}
+            onSelectionChange={v => sotre_state_recite.value.value.book_name = Array.from(v).map(v => v.toString())[0]}>
             {
                book_data.store_books.get_all_book_name().map(name =>
                   <SelectItem key={name} value={name} >
