@@ -12,12 +12,12 @@ const PageGate = () => {
    
    const [default_select_book,set_default_select_book] = useState<string[]>([]);
    const [default_select_filters,set_default_select_filters] = useState<string[]>([]);
-   setTimeout(()=>{//APP一进来就是这个页面,会导致store初始化的异步流还未加载完成,导致渲染状态存在问题
-      if(sotre_state_recite.value.value.book_name!=undefined){
-         set_default_select_book([sotre_state_recite.value.value.book_name]);
-      }
-      set_default_select_filters(sotre_state_recite.value.value.filters);
-   },1000)
+   // setTimeout(()=>{//APP一进来就是这个页面,会导致store初始化的异步流还未加载完成,导致渲染状态存在问题
+   //    if(sotre_state_recite.value.value.book_name!=undefined){
+   //       set_default_select_book([sotre_state_recite.value.value.book_name]);
+   //    }
+   //    set_default_select_filters(sotre_state_recite.value.value.filters);
+   // },10000)
    const start = () => {
       if (sotre_state_recite.value.value.book_name == undefined) {
          Toast.show("请选择单词本")
