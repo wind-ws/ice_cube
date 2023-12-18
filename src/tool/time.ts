@@ -20,5 +20,9 @@ export const get_ymd = (time: number): string => {
    return `${year}-${month}-${day}`;
 }
 
+/// 获取 time 和 现在 差多少天
+export const get_differ_days = (time:number):number => {
+   return day(now()) - day(time)
+}
 
 

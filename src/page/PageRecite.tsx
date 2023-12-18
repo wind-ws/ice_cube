@@ -30,14 +30,7 @@ const PageRecite = () => {
       if(word.current=="over") return ;
       book.value.word_list[word.current.word].score = score; 
    }
-   const a = useRef({a:{b:0}});
-   useEffect(()=>{
-      console.log(123);
-      console.log(a.current.a.b);
-      a.current.a.b = 999;
-   },[a.current])
-   a.current.a.b=666;
-   console.log(a.current.a.b);
+
    return (<div style={{ height: "100vh" }}>
       {
          word.current == "over" ?

@@ -72,7 +72,7 @@ export class StoreValue<V extends object> {
    /// 现在已经通过Proxy达到存储和变量同步, 这个函数要完成的是 变量和渲染同步
    /// 只需要把 useState(0) 传进来就可以在当前页面 同步渲染了
    /// 不要 用子组件的状态, 不然 父组件就不会渲染了
-   /// 经量少用这个
+   /// 尽量少用这个
    public set_hook(hook:[number,(v:number)=>void ]){
       this.hook = hook;
    }
@@ -80,7 +80,8 @@ export class StoreValue<V extends object> {
    private ChangeHandler(updatedObject: DeepObject<V>) {
       console.log(`被修改的key<${this._key}>,被修改的内容如下`);
       console.log(updatedObject);
-      this.hook[1](this.hook[0]+1);// 若触发这个hook会触发渲染吗?
+      this.hook[1](this.hook[0]+1);//触发渲染
+      this.hook = [0,()=>{}];//确保不会把state带到其他页面
       if (this.auto_set) {
          store.set(this._key, this._value);
       }
