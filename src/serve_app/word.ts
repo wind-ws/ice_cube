@@ -4,8 +4,8 @@
 
 /// 共享的单词信息 , 不区分单词本
 
-import { get_random_int } from "./random";
-import { now } from "./time";
+import { get_random_int } from "../tool/random";
+import { now } from "../tool/time";
 
 /// 每一个单词的类型
 export type GlobalWordMes = {

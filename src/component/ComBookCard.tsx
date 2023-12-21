@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { book_data } from "../tool/sotre/store_book";
+import { book_data } from "../serve_app/sotre/store_book";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
@@ -20,19 +20,25 @@ type Props = {
 ///   筛选删除单词(通过筛选器删除当前单词本中的部分单词)
 const ComBookCard = ({ names, index }: Props) => {
    const navigate = useNavigate();
-   const name = names[index]
-   const add=()=>{
-      navigate(`/parse/${name}`);
+   const book_name = names[index]
+   const add_word=()=>{
+      navigate(`/parse/${book_name}`);
    }
-   const _delete=()=>{
+   const copy = ()=>{
+
+   }
+   const delete_word=()=>{
       
+   }
+   const delete_book = ()=>{
+      book_data.store_books.delete_book(book_name);
    }
    return (<div className="w-full">
       <Dropdown>
          <DropdownTrigger>
             <Card isPressable fullWidth>
                <CardHeader>
-                  {name}
+                  {book_name}
                </CardHeader>
                <CardBody>
 
@@ -42,10 +48,10 @@ const ComBookCard = ({ names, index }: Props) => {
          <DropdownMenu
             aria-label="Static Actions"
             disabledKeys={["copy", "filter_delete_word"]}>
-            <DropdownItem key="add" onPress={add}>添加单词</DropdownItem>
-            <DropdownItem key="copy"  >繁殖</DropdownItem>
-            <DropdownItem key="filter_delete_word" >筛选删除单词</DropdownItem>
-            <DropdownItem key="delete" className="text-danger" color="danger">
+            <DropdownItem key="add" onPress={add_word}>添加单词</DropdownItem>
+            <DropdownItem key="copy" onPress={copy} >繁殖</DropdownItem>
+            <DropdownItem key="filter_delete_word" onPress={delete_word} >筛选删除单词</DropdownItem>
+            <DropdownItem key="delete" onPress={delete_book} className="text-danger" color="danger">
                删除单词本
             </DropdownItem>
          </DropdownMenu>

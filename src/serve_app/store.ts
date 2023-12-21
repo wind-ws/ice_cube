@@ -1,5 +1,5 @@
 import { Store } from "@tauri-apps/plugin-store";
-import { DeepObject, createDeepProxy } from "./proxy";
+import { DeepObject, createDeepProxy } from "../tool/proxy";
 import { useRef, useState, useSyncExternalStore } from "react";
 
 
@@ -40,7 +40,7 @@ export class StoreValue<V extends object> {
    public hook:[number,(v:number)=>void ]= [0,()=>{}];
    /// _default : 传入一个生成value的默认值 , 如果key在sotre中不存在才会使用默认值
    /// 不知道为什么Ts的类型推断不能用V约束存在Default来达到通过V泛型调用default函数
-   constructor(key: string, _default: Default<V>, auto_set: boolean = false, auto_save: boolean = false) {
+   constructor(key: string, _default: Default<V>, auto_set: boolean = true, auto_save: boolean = false) {
       this._key = key;
       this._value = createDeepProxy(_default(), (v) => this.ChangeHandler(v));
       store.get<V>(key).then(v => {

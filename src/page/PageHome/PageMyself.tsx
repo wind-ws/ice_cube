@@ -1,9 +1,10 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
-import { book_data } from "../../tool/sotre/store_book";
+import { book_data } from "../../serve_app/sotre/store_book";
 import { useEffect, useState, useRef } from "react";
 import ComBookCard from "../../component/ComBookCard";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+import { store_filter } from "../../serve_app/filter";
 
 const PageMyself = () => {
    const [names, _] = useState<string[]>(book_data.store_books.get_all_book_name());
@@ -49,6 +50,7 @@ const PageMyself = () => {
       <>
          <div>
             <Button onPress={()=>navigate("/create_filter")}>创建过滤器</Button>
+            <Button onPress={()=>store_filter.delete_all_filter()}>删除所有过滤器</Button>
             <ComBookCards names={names}></ComBookCards>
          </div>
       </>

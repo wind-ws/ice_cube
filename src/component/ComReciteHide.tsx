@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react"
-import { BookWordMes } from "../tool/word";
-import { TranslateType } from "../tool/translation";
+import { BookWordMes } from "../serve_app/word";
+import { TranslateType } from "../serve_app/translation";
 import { Button, Chip } from "@nextui-org/react";
-import { sotre_state_recite } from "../tool/state/state_recite";
+import { sotre_state_recite } from "../serve_app/state/state_recite";
 import { get_differ_days, get_ymd } from "../tool/time";
-import { book_golbal } from "../tool/sotre/store_book";
-import { Icons } from "../tool/icons";
+import { book_golbal } from "../serve_app/sotre/store_book";
+import { Icons } from "../serve_app/icons";
 
 type Props = {
    mes: BookWordMes,
+   index: number,//当前复习的地方
+   len: number,//单词列表的总长度
    on_show: () => void,//告诉 父组件,要触发展开
 }
 
 /// 隐藏单词意思的组件,即未展开状态
-const ComReciteHide = ({ mes, on_show }: Props) => {
+const ComReciteHide = ({ mes,index,len, on_show }: Props) => {
 
-   const [star, set_star] = useState(book_golbal.store_golbal.get_star(mes.word));
+   const [star, set_star] = useState(()=>book_golbal.store_golbal.get_star(mes.word));
    useEffect(() => {
       book_golbal.store_golbal.set_star(mes.word, star);
    }, [star]);
@@ -26,7 +28,9 @@ const ComReciteHide = ({ mes, on_show }: Props) => {
 
    const Head = () => {
       return (<div className="block w-full h-20  ">
-
+         <div className="flex flex-col w-full h-full text-center">
+            {index}/{len}
+         </div>
       </div>)
    }
    const Body = () => {
@@ -91,7 +95,7 @@ const ComReciteHide = ({ mes, on_show }: Props) => {
          </div>
       </div>)
    }
-   return (<div className="w-full h-full bg-slate-200" style={{ height: "100vh" }}>
+   return (<div className="w-full h-full bg-slate-100" style={{ height: "100vh" }}>
       <div className="flex flex-col" style={{ height: "100vh" }}>
          <div className="flex flex-initial w-full h-20  ">
             <Head></Head>

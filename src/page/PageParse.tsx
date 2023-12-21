@@ -1,7 +1,7 @@
 import { Button, Textarea } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { parse } from "../tool/parse";
-import { book_data, book_golbal } from "../tool/sotre/store_book";
+import { parse } from "../serve_app/parse";
+import { book_data, book_golbal } from "../serve_app/sotre/store_book";
 import { useState } from "react";
 
 const PageParse = () => {

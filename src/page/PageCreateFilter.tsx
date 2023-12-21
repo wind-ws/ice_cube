@@ -1,6 +1,6 @@
 import { Button, Input, Radio, RadioGroup, Slider } from "@nextui-org/react"
 import { useState } from "react"
-import { StoreFilter, store_filter } from "../tool/filter";
+import { StoreFilter, store_filter } from "../serve_app/filter";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "antd-mobile";
 
@@ -15,12 +15,12 @@ const PageCreateFilter = () => {
    const [time_range, set_time_range] = useState<StoreFilter["time_range"]>(null);
    const [yes_no, set_yes_no] = useState<StoreFilter["yes_no"]>(null);
    const save = () => {
-      if(name.length==0){
+      if (name.length == 0) {
          Toast.show("名字不能为空")
          return;
       }
       // 为了方便允许 通过 同名 修改 配置
-      const filter :StoreFilter= {
+      const filter: StoreFilter = {
          name: name,
          max_word_num: max,
          is_star: star,
@@ -33,6 +33,13 @@ const PageCreateFilter = () => {
       Toast.show("保存成功")
    }
    return (<>
+      <pre className="whitespace-pre-wrap">
+         {"提醒1: 若没有限制最大单词量, 尽可能什么什么的并不会进行筛选\n"}
+         {"提醒2: 筛选后会对单词组随机排序\n"}
+         {"提醒3: 多个过滤器配合并非且运算而是或运算,也就是多个筛选器筛选后重新把单词组组合到一起而已"}
+      </pre>
+
+
       <Input value={name} onValueChange={set_name} label="name" placeholder="Enter your filter name"></Input>
       <Slider label="最大单词量(0表示过滤不限制上限)"
          step={1}
@@ -119,7 +126,7 @@ const PageCreateFilter = () => {
          <Radio value="no>=yes">错误的次数大于等于正确的次数</Radio>
          <Radio value="null">不关心</Radio>
       </RadioGroup>
-      <Button onPress={()=>navigate(-1)} >返回</Button>
+      <Button onPress={() => navigate(-1)} >返回</Button>
       <Button color="success" onPress={save} >保存</Button>
 
    </>)

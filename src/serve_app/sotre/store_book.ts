@@ -65,6 +65,10 @@ export namespace book_data {
       get_all_word_mes(name: string):WordList,//获取所有单词信息
       delete_word(name:string,word:string):void,//删除指定的单词本中的单词
       delete_all_word(name:string):void,//删除指定单词本的所有单词
+      set_word_time(name:string,word:string, time:number):void,//设置一本单词书中一个单词的last_time
+      plus_word_yes(name:string,word:string):void,//对一个单词本的单词的yes 加1
+      plus_word_no(name:string,word:string):void,//对一个单词本的单词的no 加1
+      
    } = {
       value: (()=>{//加载所有已经存在的单词本
          (async ()=>{
@@ -72,7 +76,7 @@ export namespace book_data {
             keys.forEach(key => {
                const name = get_name_from_key(key);
                store_books.value[name] = new StoreValue<StoreBookData>(key,
-                  ()=>default_store_book_data(name));
+                  ()=>default_store_book_data(name),true);
             })
          })()
          return {}
@@ -122,6 +126,15 @@ export namespace book_data {
       },
       delete_all_word(name:string){
          this.value[name].value.word_list = {};
+      },
+      set_word_time(name:string,word:string, time:number){
+         this.value[name].value.word_list[word].last_time = time;
+      },
+      plus_word_yes(name:string,word:string):void{
+         this.value[name].value.word_list[word].yes = this.value[name].value.word_list[word].yes + 1; 
+      },
+      plus_word_no(name:string,word:string):void{
+         this.value[name].value.word_list[word].no = this.value[name].value.word_list[word].no + 1;
       }
    }
 }

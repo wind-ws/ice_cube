@@ -7,11 +7,12 @@
 /// 不用百分比, 控制过滤器对 最大单词量的数量, 让多个过滤器配合
 /// ...
 
-import { get_random_int } from "./random";
+import { get_random_int } from "../tool/random";
 import { book_data, book_golbal } from "./sotre/store_book"
 import { StoreKey, StoreValue, creat_key } from "./store";
-import { day, now } from "./time";
+import { day, now } from "../tool/time";
 import { BookWordMes } from "./word";
+import { sotre_state_recite } from "./state/state_recite";
 
 /// 这是一个存储类型
 export type StoreFilter = {
@@ -39,9 +40,16 @@ export type StoreFilter = {
    //todo:...
 }
 
+/// 检查这个单词是否可以通过这个过滤器
+/// true 可以通过(不过滤) , false 不可以通过(过滤掉)
+const filter_word = (filter: StoreFilter, word:BookWordMes):boolean => {
+   return false 
+}
+
 /// 过滤单词列表
 /// ! 未测试,以我对自己的了解,这个函数很有可能有问题,出问题就调整这个函数!
 const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWordMes[] => {
+
    let ret_word_list: BookWordMes[] = word_list;
    if (filter.is_star != null) {
       ret_word_list = ret_word_list.filter(mes => {
@@ -105,9 +113,9 @@ const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWo
          // ! 注意 以下代码并没有经过测试,可能出现 非预期排列 问题
          switch (filter.score_range[0] + " " + filter.time_range[0]) {
             case "lowest recent": { ret_word_list = ret_word_list.sort((a: BookWordMes, b: BookWordMes) => 
-               sort_fn(a, false, b, true)) } break;
-            case "largest recent": { ret_word_list = ret_word_list.sort((a: BookWordMes, b: BookWordMes) => 
                sort_fn(a, true, b, true)) } break;
+            case "largest recent": { ret_word_list = ret_word_list.sort((a: BookWordMes, b: BookWordMes) => 
+               sort_fn(a, false, b, true)) } break;
             case "lowest ago": { ret_word_list = ret_word_list.sort((a: BookWordMes, b: BookWordMes) => 
                sort_fn(a, false, b, false)) } break;
             case "largest ago": { ret_word_list = ret_word_list.sort((a: BookWordMes, b: BookWordMes) => 
@@ -127,13 +135,14 @@ const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWo
       if(filter.score_range != null || filter.time_range != null){//有一个不为null,说明上面的一个if被触发,直接删除尾部元素即可
          ret_word_list.splice(filter.max_word_num)//移除后面的全部
       }else{//随机删除元素,直到数量达到正确的上限
-         let i = word_list.length - filter.max_word_num;//需要删除的量
+         let i = ret_word_list.length - filter.max_word_num;//需要删除的量
          for(;i>0;i--) {
-            const index=get_random_int(0,word_list.length-1);//被删除的索引
-            word_list.splice(index, 1);
+            const index=get_random_int(0,ret_word_list.length-1);//被删除的索引
+            ret_word_list.splice(index, 1);
          }
       }
    }
+   
    return ret_word_list
 }
 
@@ -144,7 +153,7 @@ export const filters_word_list = (filters: StoreFilter[], word_list: BookWordMes
    let ret_word_list:BookWordMes[] = [];
    filters.forEach(filter => {
       // 保证元素不重复
-      ret_word_list = Array.from(new Set([...ret_word_list,...filter_word_list(filter, word_list)]))
+      ret_word_list = Array.from(new Set([...ret_word_list,...filter_word_list(filter, [...word_list])]))
    })
    return ret_word_list
 }
@@ -157,6 +166,7 @@ export const store_filter:{
    get_filter(name:string):StoreFilter,
    set_filter(filter:StoreFilter):void,
    get_all_filter_name():string[],
+   delete_all_filter():void,//删除所有过滤器
 }={
    value: new StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true,true),//并非高频的修改,开启自动存储
    get_filter(name:string):StoreFilter{
@@ -167,6 +177,11 @@ export const store_filter:{
    },
    get_all_filter_name():string[]{
       return Object.keys(this.value.value)
+   },
+   delete_all_filter(){
+      this.value.value = {};
+      //说实话,用这种全部是全局状态的写法,好在项目小,要不然 影响范围一大了, 操作的心智负担是超大的哦~
+      sotre_state_recite.value.value.filters = [];
    }
 }
 
