@@ -75,6 +75,11 @@ export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandle
          onChange(receiver as DeepObject<T>);
          return true;
       },
+      deleteProperty(target, prop) {
+         Reflect.deleteProperty(target, prop);
+         onChange("delete" as DeepObject<T>);
+         return true;
+      },
    };
 
    return new Proxy(obj, handler) as DeepObject<T>;
