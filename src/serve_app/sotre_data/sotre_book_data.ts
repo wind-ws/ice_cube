@@ -39,7 +39,7 @@ const get_name_from_key = (key: string): string => {
    return key.substring(creat_key([default_key]).length + 1)
 }
 /// 根据当前sotre存储 获取所有关于单词本数据的key 
-export const get_book_keys = async (): Promise<string[]> => {
+const get_book_keys = async (): Promise<string[]> => {
    return new Promise<string[]>((resolve, reject) => {
       store.keys()
          .then((v) => {
@@ -51,8 +51,9 @@ export const get_book_keys = async (): Promise<string[]> => {
    })
 }
 
-
-const store_book_data: {
+/// 存储实体
+/// 所有单词本的数据
+export const store_book_data: {
    value: { [book_name: string]: StoreValue<StoreBookData> },
    /// 获取所有书名
    get_all_book_name():string[],

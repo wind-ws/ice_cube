@@ -4,12 +4,14 @@ import { BookWordMes, GlobalWordMes, default_golbal_word_mes } from "../word"
 
 
 /// 子分区
+/// #oblish
 enum SotreBookKey {
    // BookMes = "book_mes", //所有单词本的信息
    Golbal = "golbal", //存储单词的全局信息
    Data = "data",// 这个key是"book:data:<单词本名>",存储实际的单词本数据
 }
 
+/// #oblish
 export namespace book_data {
    /// 一本单词书的类型
    /// 实际存储数据的单词书类型
