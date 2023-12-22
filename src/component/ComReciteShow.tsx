@@ -13,7 +13,7 @@ type Props = {
    mes: BookWordMes,
    index: number,//当前复习的地方
    len: number,//单词列表的总长度
-   translations: TranslateType,//翻译结果
+   translations: ()=>TranslateType,//翻译结果
    yes_no(score: number): void,//if yes , score 必须为正数, if no, score 必须负数
 }
 
@@ -33,7 +33,7 @@ const ComReciteShow = ({ mes,index,len,translations, yes_no }: Props) => {
 
 
    const play_audio = () => {
-      translations.audio.play()
+      translations().audio.play()
    }
    const Head = () => {
       return (<div className="block w-full h-20  ">
@@ -64,7 +64,7 @@ const ComReciteShow = ({ mes,index,len,translations, yes_no }: Props) => {
 
                </div>
                <div className="flex flex-1 flex-col w-full">
-                  {translations.paraphrase}
+                  {translations().paraphrase}
                </div>
                <div className="flex flex-1 flex-col w-full ">
                   <div className="flex w-full min-h-[60%] bg-slate-200 rounded-md border-2 border-slate-400 p-2"

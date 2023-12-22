@@ -13,6 +13,7 @@
         "@heroicons/react": "^2.0.18",
         "@nextui-org/react": "^2.2.9",
         "@tauri-apps/api": "^2.0.0-alpha.11",
+        "@tauri-apps/plugin-http": "^2.0.0-alpha.6",
         "@tauri-apps/plugin-shell": "^2.0.0-alpha.3",
         "@tauri-apps/plugin-store": "^2.0.0-alpha.3",
         "@types/howler": "^2.2.11",

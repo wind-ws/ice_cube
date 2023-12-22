@@ -5,6 +5,8 @@ import ComBookCard from "../../component/ComBookCard";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { store_filter } from "../../serve_app/filter";
+import { translate_text_url } from "../../serve_app/translation";
+import { fetch } from '@tauri-apps/plugin-http';
 
 const PageMyself = () => {
    const [names, _] = useState<string[]>(book_data.store_books.get_all_book_name());

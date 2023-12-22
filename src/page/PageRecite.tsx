@@ -19,7 +19,7 @@ const PageRecite = () => {
       navigate("/home/gate");
    }
    const book = book_data.store_books.value[sotre_state_recite.value.value.book_name as string];
-   const [word,set_word] = useState<BookWordMes | "over">(()=>sotre_state_recite.get_current_word());
+   const [word, set_word] = useState<BookWordMes | "over">(() => sotre_state_recite.get_current_word());
    const [is_show, set_is_show] = useState(false);
 
    const set_score = (score: number) => {
@@ -27,8 +27,7 @@ const PageRecite = () => {
       book.value.word_list[word.word].score = score;
    }
 
-   console.warn(sotre_state_recite);
-   
+
    const yes_no = (score: number) => {
       const word_mes = (word as BookWordMes);
       set_score(book.value.word_list[word_mes.word].score + score);
@@ -44,7 +43,6 @@ const PageRecite = () => {
    }
    const on_show = () => {
       set_is_show(true);
-
    }
 
    return (<div style={{ height: "100vh" }}>
@@ -53,16 +51,16 @@ const PageRecite = () => {
             <div>没有单词啦</div> :
             is_show ?
                <ComReciteShow mes={word}
-                  translations={sotre_state_recite.get_translation(word.word)}
-                  index={sotre_state_recite.value.value.index + 1 }
+                  translations={()=>sotre_state_recite.get_translation(word.word)}
+                  index={sotre_state_recite.value.value.index + 1}
                   len={sotre_state_recite.value.value.word_list.length}
                   yes_no={yes_no} ></ComReciteShow>
                :
                <ComReciteHide mes={word}
+                  translations={()=>sotre_state_recite.get_translation(word.word)}
                   index={sotre_state_recite.value.value.index + 1}
                   len={sotre_state_recite.value.value.word_list.length}
                   on_show={on_show}></ComReciteHide>
-
       }
 
    </div>)

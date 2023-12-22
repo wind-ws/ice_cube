@@ -11,11 +11,12 @@ type Props = {
    mes: BookWordMes,
    index: number,//当前复习的地方
    len: number,//单词列表的总长度
+   translations: ()=>TranslateType,//翻译结果
    on_show: () => void,//告诉 父组件,要触发展开
 }
 
 /// 隐藏单词意思的组件,即未展开状态
-const ComReciteHide = ({ mes,index,len, on_show }: Props) => {
+const ComReciteHide = ({ mes,index,len,translations, on_show }: Props) => {
 
    const [star, set_star] = useState(()=>book_golbal.store_golbal.get_star(mes.word));
    useEffect(() => {
@@ -23,7 +24,7 @@ const ComReciteHide = ({ mes,index,len, on_show }: Props) => {
    }, [star]);
 
    const play_audio = () => {
-      sotre_state_recite.get_translation(mes.word).audio.play()
+      translations().audio.play()
    }
 
    const Head = () => {
@@ -88,7 +89,8 @@ const ComReciteHide = ({ mes,index,len, on_show }: Props) => {
                   onClick={play_audio}></Icons.HeroiconsOutline.SpeakerWaveIcon>
             </div>
             <div className="flex flex-1 place-content-center place-items-center w-full h-14 ">
-               <Button variant="light" color="primary" className="w-[80%] h-[60%] " onPress={on_show}>
+               <Button variant="light" color="primary" className="w-[80%] h-[60%]  hover:bg-blue-100 "
+                  onPress={on_show}>
                   <Icons.HeroiconsOutline.EyeIcon className="h-8 w-8 text-blue-500"></Icons.HeroiconsOutline.EyeIcon>
                </Button>
             </div>
