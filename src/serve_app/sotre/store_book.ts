@@ -1,5 +1,5 @@
 import { Toast } from "antd-mobile"
-import { StoreKey, StoreValue, creat_key, store } from "../store"
+import { StoreKey, _StoreValue, creat_key, store } from "../store"
 import { BookWordMes, GlobalWordMes, default_golbal_word_mes } from "../word"
 
 
@@ -53,7 +53,7 @@ export namespace book_data {
 
    /// 所有单词书的实体状态
    export const store_books: {
-      value: { [book_name: string]: StoreValue<StoreBookData> },
+      value: { [book_name: string]: _StoreValue<StoreBookData> },
       // add_value:(name: string)=>void,// 给 value 添加一个book
       creat_book:(name: string)=>void,// 创建一个单词数
       delete_book:(name: string)=>void,// 删除一本单词数
@@ -75,7 +75,7 @@ export namespace book_data {
             const keys = await get_book_keys();
             keys.forEach(key => {
                const name = get_name_from_key(key);
-               store_books.value[name] = new StoreValue<StoreBookData>(key,
+               store_books.value[name] = new _StoreValue<StoreBookData>(key,
                   ()=>default_store_book_data(name),true);
             })
          })()
@@ -87,7 +87,7 @@ export namespace book_data {
             if (v) {//重复
                Toast.show("名字重复");
             } else {//不重复
-               store_books.value[name] = new StoreValue<StoreBookData>(key,
+               store_books.value[name] = new _StoreValue<StoreBookData>(key,
                   ()=>default_store_book_data(name));
                store.save()
                Toast.show("创建成功");
@@ -151,13 +151,13 @@ export namespace book_golbal {
 
    /// store_golbal 的实体状态
    export const store_golbal: {
-      value: StoreValue<StoreGolbal>,//存储状态的值
+      value: _StoreValue<StoreGolbal>,//存储状态的值
       set_note: (word: string, note: string) => void, // 修改note
       set_star: (word: string, star: boolean) => void,// 修改star
       get_star(word: string): boolean,//获取单词是否是star, 单词不存在就返回flase
       get_note(word: string): string,//获得单词的note , 单词不存在则返回 ""
    } = {
-      value: new StoreValue<StoreGolbal>(golbal_key, () => ({})),
+      value: new _StoreValue<StoreGolbal>(golbal_key, () => ({})),
       set_note: (word: string, note: string) => {
          maybe_init(word);
          store_golbal.value.value[word].note = note;

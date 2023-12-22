@@ -3,7 +3,7 @@
 import { StoreFilter, filters_word_list, store_filter } from "../filter"
 import { get_random_int } from "../../tool/random"
 import { book_data } from "../sotre/store_book"
-import { StoreKey, StoreValue, creat_key } from "../store"
+import { StoreKey, _StoreValue, creat_key } from "../store"
 import { TranslateType, translate } from "../translation"
 import { BookWordMes } from "../word"
 
@@ -30,7 +30,7 @@ const state_recite_key = creat_key([StoreKey.State, "recite"]);
 /// 一个存储状态
 /// todo : 这个并不完美,需要调整
 export const sotre_state_recite: {
-   value: StoreValue<StateRecite>,
+   value: _StoreValue<StateRecite>,
    translation_map: { [word: string]: TranslateType }, //翻译存储
    index_translation: number,//翻译到的下标
    over_load(book_name: string, filters: StoreFilter[]): void,/// 重新加载value,状态初始化
@@ -39,7 +39,7 @@ export const sotre_state_recite: {
    get_translation(word_name: string): TranslateType,//获取一个单词的翻译//todo: 调整这个函数,让它变成异步的
    load_translation_map(): void, //加载翻译
 } = {
-   value: new StoreValue(state_recite_key, default_state_recite),
+   value: new _StoreValue(state_recite_key, default_state_recite),
    translation_map: {},
    index_translation: 0,
    over_load(book_name: string, filters: StoreFilter[]) {

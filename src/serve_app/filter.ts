@@ -9,7 +9,7 @@
 
 import { get_random_int } from "../tool/random";
 import { book_data, book_golbal } from "./sotre/store_book"
-import { StoreKey, StoreValue, creat_key } from "./store";
+import { StoreKey, _StoreValue, creat_key } from "./store";
 import { day, now } from "../tool/time";
 import { BookWordMes } from "./word";
 import { sotre_state_recite } from "./state/state_recite";
@@ -162,13 +162,13 @@ export const filter_key = creat_key([StoreKey.Filter])
 
 /// store_filter 的实体状态
 export const store_filter:{
-   value:StoreValue<{[name:string]:StoreFilter}>,
+   value:_StoreValue<{[name:string]:StoreFilter}>,
    get_filter(name:string):StoreFilter,
    set_filter(filter:StoreFilter):void,
    get_all_filter_name():string[],
    delete_all_filter():void,//删除所有过滤器
 }={
-   value: new StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true,true),//并非高频的修改,开启自动存储
+   value: new _StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true,true),//并非高频的修改,开启自动存储
    get_filter(name:string):StoreFilter{
       return this.value.value[name] 
    },
