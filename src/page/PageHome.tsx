@@ -25,14 +25,21 @@ const PageHome = () => {
                <Icons.HeroiconsOutline.BookOpenIcon className='w-full h-full text-blue-300' />
                : <Icons.HeroiconsOutline.BookOpenIcon className='w-full h-full text-slate-400' />,
             title: '大门',
-         },
-         {
+         },{
             key: '/home/myself',
             icon: (active: boolean) => active ?
                <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-blue-300' />
                : <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-slate-400' />,
             title: '我自己哦!',
-         },]
+         },{
+            key: '/home/debug',
+            icon: (active: boolean) => active ?
+               <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-blue-300' />
+               : <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-slate-400' />,
+            title: 'debug',
+         }
+      
+      ]
       return (
          <div className=" bg-slate-50 w-full h-12"
             style={{ flex: 0 }}>

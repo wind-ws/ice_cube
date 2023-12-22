@@ -5,6 +5,7 @@ import { useRef, useState, useSyncExternalStore } from "react";
 
 
 /// 统一使用一个存储点
+/// #oblish : 现在采用 多个存储点
 export const store: Store = new Store("store");
 
 
@@ -15,6 +16,18 @@ export enum StoreKey {
    State = "state",
    Book = "book",
    Filter = "filter",
+}
+
+/// 所有的存储文件
+/// 每一个枚举是一个存储点,一个独立的仓库,也是文件名
+/// 对于当前的仓库,默认的key,就是枚举本身, 若要分区,就是 "枚举本身:子区key"
+/// 例如: 
+///   StoreFile.BookData ,默认的key的操作 sotre.set("book_data.json",{})
+///   子区: store.set("book_data.json:abc",{})
+/// 要求每一个ts文件(可以包含子文件夹)管理一个存储文件
+export enum StoreFile {
+   BookData = "book_data.json",
+
 }
 
 
