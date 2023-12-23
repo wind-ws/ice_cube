@@ -161,6 +161,7 @@ export const filters_word_list = (filters: StoreFilter[], word_list: BookWordMes
 export const filter_key = creat_key([StoreKey.Filter])
 
 /// store_filter 的实体状态
+/// #oblish
 export const store_filter:{
    value:_StoreValue<{[name:string]:StoreFilter}>,
    get_filter(name:string):StoreFilter,

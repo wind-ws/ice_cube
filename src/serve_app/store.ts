@@ -34,7 +34,8 @@ export enum StoreKey {
 export enum StoreFile {
    BookData = "book_data.json",
    BookGolbal = "book_golbal.json",
-
+   StateRecite = "state_recite.json",
+   Filter = "filter.json",
 }
 
 

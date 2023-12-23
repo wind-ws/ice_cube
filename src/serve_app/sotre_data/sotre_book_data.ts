@@ -65,7 +65,7 @@ export const store_book_data: {
    /// 删除一本单词本
    delete_book(book_name: string): void,
    /// 获取一本单词书的实际操作
-   get_book(name: string):{
+   get_book(book_name: string):{
       /// 把单词推进指定的单词本, is_replace=true 若以存在则替换
       put_word(word:BookWordMes,is_replace:boolean):void,
       /// 把 大量单词 推进指定的单词本, is_replace=true 若以存在则替换

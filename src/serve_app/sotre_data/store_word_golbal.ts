@@ -3,7 +3,6 @@ import { StoreFile, StoreValue } from "../store";
 import { GlobalWordMes, default_golbal_word_mes } from "../word"
 
 const default_key = StoreFile.BookGolbal;
-// const child_key = (book_name: string): string => creat_key([default_key, book_name]);
 const store = new Store(StoreFile.BookGolbal);
 
 /// 对应的key : book:golbal

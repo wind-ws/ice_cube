@@ -140,7 +140,7 @@ export namespace book_data {
       }
    }
 }
-
+/// #oblish
 export namespace book_golbal {
 
    export const golbal_key = creat_key([StoreKey.Book, SotreBookKey.Golbal])
