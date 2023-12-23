@@ -8,11 +8,9 @@
 /// ...
 
 import { get_random_int } from "../tool/random";
-import { book_data, book_golbal } from "./sotre/store_book"
-import { StoreKey, _StoreValue, creat_key } from "./store";
 import { day, now } from "../tool/time";
+import { store_word_golbal } from "./sotre_data/store_word_golbal";
 import { BookWordMes } from "./word";
-import { sotre_state_recite } from "./state/state_recite";
 
 /// 这是一个存储类型
 export type StoreFilter = {
@@ -53,7 +51,7 @@ const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWo
    let ret_word_list: BookWordMes[] = word_list;
    if (filter.is_star != null) {
       ret_word_list = ret_word_list.filter(mes => {
-         const is_star = book_golbal.store_golbal.get_star(mes.word);
+         const is_star = store_word_golbal.get_star(mes.word);
          return is_star == filter.is_star
       })
    }
@@ -158,31 +156,5 @@ export const filters_word_list = (filters: StoreFilter[], word_list: BookWordMes
    return ret_word_list
 }
 
-export const filter_key = creat_key([StoreKey.Filter])
 
-/// store_filter 的实体状态
-/// #oblish
-export const store_filter:{
-   value:_StoreValue<{[name:string]:StoreFilter}>,
-   get_filter(name:string):StoreFilter,
-   set_filter(filter:StoreFilter):void,
-   get_all_filter_name():string[],
-   delete_all_filter():void,//删除所有过滤器
-}={
-   value: new _StoreValue<{[name:string]:StoreFilter}>(filter_key,()=>({}),true,true),//并非高频的修改,开启自动存储
-   get_filter(name:string):StoreFilter{
-      return this.value.value[name] 
-   },
-   set_filter(filter:StoreFilter):void{
-      this.value.value[filter.name] = filter;
-   },
-   get_all_filter_name():string[]{
-      return Object.keys(this.value.value)
-   },
-   delete_all_filter(){
-      this.value.value = {};
-      //说实话,用这种全部是全局状态的写法,好在项目小,要不然 影响范围一大了, 操作的心智负担是超大的哦~
-      sotre_state_recite.value.value.filters = [];
-   }
-}
 

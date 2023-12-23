@@ -82,6 +82,8 @@ export const store_book_data: {
       plus_word_yes(word:string):void,
       /// 对一个单词本的单词的no 加1
       plus_word_no(word:string):void,
+      /// 调用StoreValue中的save
+      save():void,
    },
 } = {
    value: (() => {//加载所有已经存在的单词本
@@ -153,6 +155,9 @@ export const store_book_data: {
          },
          plus_word_no(word:string):void{
             book.value.word_list[word].no = book.value.word_list[word].no + 1; 
+         },
+         save():void{
+            book.save();
          }
 
       }

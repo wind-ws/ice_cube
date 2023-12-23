@@ -1,6 +1,6 @@
 import { Badge, TabBar } from 'antd-mobile'
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Icons } from '../serve_app/icons';
+import { Icons } from '../../serve_app/icons';
 
 const PageHome = () => {
    const navigate = useNavigate();

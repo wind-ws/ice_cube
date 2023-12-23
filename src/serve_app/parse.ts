@@ -9,7 +9,8 @@
 ///   <note>
 /// |
 
-import { book_data, book_golbal } from "./sotre/store_book";
+import { WordList } from "./sotre_data/sotre_book_data";
+import { store_word_golbal } from "./sotre_data/store_word_golbal";
 import { default_book_word_mes } from "./word";
 
 
@@ -21,14 +22,14 @@ const trim_spaces = (str: string): string =>{
 
 
 /// 解析
-export const parse = (str: string):book_data.WordList=>{
+export const parse = (str: string):WordList=>{
    // 这个正则表达式有点问题, 如果最后一个单词后面没有换行符,那就无法匹配(对于<word>,而非<word>|<note>|)
    // 所以这里在后面加一个
    str = str + "\n";
    //                匹配<word>                 |  匹配<word>|<note>|
    const regex = /([\u4e00-\u9fa5a-zA-Z \d]+?\n|[\u4e00-\u9fa5a-zA-Z \d]+\|[\u4e00-\u9fa5a-zA-Z\s\d]*\|\n?)/g;
    const matches = str.match(regex);
-   const word_list:book_data.WordList = {};
+   const word_list:WordList = {};
    matches?.forEach(v=>{
       if(v.includes("|")){ // <word>|<note>| 型
          const regex = /([\u4e00-\u9fa5a-zA-Z \d]+)\|([\u4e00-\u9fa5a-zA-Z\s\d]*)\|\n?/;
@@ -38,7 +39,7 @@ export const parse = (str: string):book_data.WordList=>{
             const word = trim_spaces(matches[1]);
             word_list[word]=default_book_word_mes(word);
             const note = matches[2];
-            book_golbal.store_golbal.set_note(word,note);
+            store_word_golbal.set_note(word,note);
          }
       }else {// <word>型
          const word = trim_spaces(v);

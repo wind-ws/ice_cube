@@ -20,7 +20,7 @@ const maybe_init = (word: string) => {
 
 /// 存储实体
 /// 单词的共有数据
-const store_word_golbal: {
+export const store_word_golbal: {
    value: StoreValue<StoreWordGolbal>,//存储状态的值
    /// 修改note
    set_note(word: string, note: string): void,

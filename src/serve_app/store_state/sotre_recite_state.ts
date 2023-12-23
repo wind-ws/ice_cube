@@ -32,7 +32,7 @@ const default_recite_state = (): StateRecite => {
 
 /// 存储实体 - 状态
 /// 当前复习的进度
-const store_recite_state: {
+export const store_recite_state: {
    value: StoreValue<StateRecite>,
    /// 翻译存储
    translation_map: { [word: string]: TranslateType },
