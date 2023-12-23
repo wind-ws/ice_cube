@@ -28,7 +28,7 @@ const default_state_recite = (): StateRecite => {
 const state_recite_key = creat_key([StoreKey.State, "recite"]);
 
 /// 一个存储状态
-/// todo : 这个并不完美,需要调整
+/// #oblish
 export const sotre_state_recite: {
    value: _StoreValue<StateRecite>,
    translation_map: { [word: string]: TranslateType }, //翻译存储
