@@ -22,6 +22,7 @@ const trim_spaces = (str: string): string =>{
 
 
 /// 解析
+/// todo: 优化这个算法 
 export const parse = (str: string):WordList=>{
    // 这个正则表达式有点问题, 如果最后一个单词后面没有换行符,那就无法匹配(对于<word>,而非<word>|<note>|)
    // 所以这里在后面加一个

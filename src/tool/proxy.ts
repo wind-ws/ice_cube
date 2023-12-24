@@ -84,13 +84,13 @@ export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandle
       },
    };
    //当Option存储后就变成普通的对象(从存储获取后没法调用Option的方法),在这里我们把它转为正常的Option
-   if(Object.keys(obj).some(v=>v == "_value_option")){
+   if(Object.keys(obj).some(v=>v == "_value_option")){//true 说明obj是Option的普通对象
       const result = new Option<any>((obj as {_value_option:any})._value_option) as T;
-      obj = {...obj,...result};
+      obj = result;
    }
    if(Object.keys(obj).some(v=>v == "_value_result")){//和上面一样,这个用来解决Result的问题
       const result = new Result<any,any>((obj as {_value_result:any})._value_result) as T;
-      obj = {...obj,...result};
+      obj = result;
    }
    return new Proxy(obj, handler);
 }

@@ -51,56 +51,60 @@ const get_book_keys = async (): Promise<string[]> => {
    })
 }
 
+const new_StoreValue = (book_name: string, key: string) => {
+   return new StoreValue<StoreBookData>(store, key,
+      () => default_store_book_data(book_name), true, false, false);//拒绝自动log(不然太卡了)
+}
+
 /// 存储实体
 /// 所有单词本的数据
 export const store_book_data: {
    value: { [book_name: string]: StoreValue<StoreBookData> },
    /// 获取所有书名
-   get_all_book_name():string[],
+   get_all_book_name(): string[],
    /// 获取所有单词本的key 根据当前变量store_book_data.value
-   get_all_key():string[],
+   get_all_key(): string[],
    /// 创建一本单词书
    /// true:创建成功, false: 重复key,创建失败
    creat_book(book_name: string): Promise<boolean>,
    /// 删除一本单词本
    delete_book(book_name: string): void,
    /// 获取一本单词书的实际操作
-   get_book(book_name: string):{
+   get_book(book_name: string): {
       /// 把单词推进指定的单词本, is_replace=true 若以存在则替换
-      put_word(word:BookWordMes,is_replace:boolean):void,
+      put_word(word: BookWordMes, is_replace: boolean): void,
       /// 把 大量单词 推进指定的单词本, is_replace=true 若以存在则替换
-      put_word_list(word_list:WordList,is_replace:boolean):void,
+      put_word_list(word_list: WordList, is_replace: boolean): void,
       /// 获取所有单词信息,并非复制而是引用
-      get_all_word_mes():WordList,
+      get_all_word_mes(): WordList,
       /// 删除指定的单词本中的单词
-      delete_word(word:string):void,
+      delete_word(word: string): void,
       /// 删除指定单词本的所有单词
-      delete_all_word():void,
+      delete_all_word(): void,
       /// 设置一本单词书中一个单词的last_time
-      set_word_time(word:string, time:number):void,
+      set_word_time(word: string, time: number): void,
       /// 对一个单词本的单词的yes 加1
-      plus_word_yes(word:string):void,
+      plus_word_yes(word: string): void,
       /// 对一个单词本的单词的no 加1
-      plus_word_no(word:string):void,
+      plus_word_no(word: string): void,
       /// 调用StoreValue中的save
-      save():void,
+      save(): void,
    },
 } = {
    value: (() => {//加载所有已经存在的单词本
       get_book_keys().then((keys) => {
          keys.forEach(key => {
             const book_name = get_name_from_key(key);
-            store_book_data.value[book_name] = new StoreValue<StoreBookData>(store, key,
-               () => default_store_book_data(book_name));
+            store_book_data.value[book_name] = new_StoreValue(book_name, key);
          })
       })
       return {}
    })(),
-   get_all_book_name():string[]{
-      return Object.keys(store_book_data.value) 
+   get_all_book_name(): string[] {
+      return Object.keys(store_book_data.value)
    },
-   get_all_key():string[]{
-      return this.get_all_book_name().map(v=>get_key_from_name(v))
+   get_all_key(): string[] {
+      return this.get_all_book_name().map(v => get_key_from_name(v))
    },
    creat_book(book_name: string): Promise<boolean> {
       const key = get_key_from_name(book_name);
@@ -109,8 +113,7 @@ export const store_book_data: {
             if (v) {//重复
                resolve(false)
             } else {//不重复
-               store_book_data.value[book_name] = new StoreValue<StoreBookData>(store, key,
-                  () => default_store_book_data(book_name));
+               store_book_data.value[book_name] = new_StoreValue(book_name, key);
                store.save()
                resolve(true)
             }
@@ -124,39 +127,42 @@ export const store_book_data: {
             delete store_book_data.value[book_name];
          })
    },
-   get_book(book_name: string){
+   get_book(book_name: string) {
       const book = store_book_data.value[book_name];
       return {
          book: book,
-         put_word(word:BookWordMes,is_replace:boolean):void{
-            if(book.value.word_list[word.word] === undefined) {//不存在
-               book.value.word_list[word.word]=word
-            }else if(is_replace){//存在,嘿嘿,但是可以替换
-               book.value.word_list[word.word]=word
+         put_word(word: BookWordMes, is_replace: boolean): void {
+            if (book.value.word_list[word.word] === undefined) {//不存在
+               book.value.word_list[word.word] = word
+            } else if (is_replace) {//存在,嘿嘿,但是可以替换
+               book.value.word_list[word.word] = word
             }
          },
-         put_word_list(word_list:WordList,is_replace:boolean):void{
-            Object.values(word_list).forEach(word=>this.put_word(word,is_replace))
+         put_word_list(word_list: WordList, is_replace: boolean): void {
+            book.auto_set =false;//导入大量单词时关闭自动插入
+            Object.values(word_list).forEach(word => this.put_word(word, is_replace));
+            book.auto_set =true;
+            this.save();
          },
-         get_all_word_mes():WordList{
+         get_all_word_mes(): WordList {
             return book.value.word_list
          },
-         delete_word(word:string):void{
+         delete_word(word: string): void {
             delete book.value.word_list[word];
          },
-         delete_all_word():void{
+         delete_all_word(): void {
             book.value.word_list = {};
          },
-         set_word_time(word:string, time:number):void{
+         set_word_time(word: string, time: number): void {
             book.value.word_list[word].last_time = time;
          },
-         plus_word_yes(word:string):void{
-            book.value.word_list[word].yes = book.value.word_list[word].yes + 1; 
+         plus_word_yes(word: string): void {
+            book.value.word_list[word].yes = book.value.word_list[word].yes + 1;
          },
-         plus_word_no(word:string):void{
-            book.value.word_list[word].no = book.value.word_list[word].no + 1; 
+         plus_word_no(word: string): void {
+            book.value.word_list[word].no = book.value.word_list[word].no + 1;
          },
-         save():void{
+         save(): void {
             book.save();
          }
 

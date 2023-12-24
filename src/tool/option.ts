@@ -12,7 +12,7 @@ export const some = <T>(value: T): Option<T> => new Option<T>(["Some", value]);
 
 /// todo : 有问题, 存储Option后,从存储加载的Option没有方法调用,也就是加载后是普普通通的对象而已,而非Option
 export class Option<T> {
-   public _value_option: _Option<T>;
+   private _value_option: _Option<T>;
    constructor(value: _Option<T>) {
       this._value_option = value;
    }

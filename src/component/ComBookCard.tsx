@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { book_data } from "../serve_app/sotre/store_book";
 import { useNavigate } from "react-router-dom";
+import { store_book_data } from "../serve_app/sotre_data/sotre_book_data";
 
 type Props = {
-   names: string[],/// 单词本的name
-   index: number,  /// 指定的key
+   book_name: string,/// 单词本的name
+
 }
 
 /// 在 PageMyself 界面 用于展示 单词本基本信息
@@ -18,9 +18,8 @@ type Props = {
 ///   删除单词本(需要弹出确认框)
 ///   繁殖(通过筛选器从当前单词本筛选出部分单词,将这些单词 移动进入 其他单词本)
 ///   筛选删除单词(通过筛选器删除当前单词本中的部分单词)
-const ComBookCard = ({ names, index }: Props) => {
+const ComBookCard = ({ book_name }: Props) => {
    const navigate = useNavigate();
-   const book_name = names[index]
    const add_word=()=>{
       navigate(`/parse/${book_name}`);
    }
@@ -31,7 +30,7 @@ const ComBookCard = ({ names, index }: Props) => {
       
    }
    const delete_book = ()=>{
-      book_data.store_books.delete_book(book_name);
+      store_book_data.delete_book(book_name);
    }
    return (<div className="w-full">
       <Dropdown>

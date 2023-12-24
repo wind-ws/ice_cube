@@ -8,6 +8,7 @@ import PageRecite from "./page/PageRoot/PageRecite";
 import PageCreateFilter from "./page/PageRoot/PageCreateFilter";
 import PageDebug from "./page/PageRoot/PageHome/PageDebug";
 import PageLoad from "./page/PageLoad";
+import PageCreateBook from "./page/PageRoot/PageCreateBook";
 
 
 function App() {
@@ -32,6 +33,7 @@ const MyRoutes = () => {
             <Route path="/parse/:name" element={<PageParse />} />
             <Route path="/recite" element={<PageRecite />} />
             <Route path="/create_filter" element={<PageCreateFilter />} />
+            <Route path="/create_book" element={<PageCreateBook />} />
          </Route>
       </Routes>
    )
