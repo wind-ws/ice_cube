@@ -1,5 +1,5 @@
 import { Store } from "@tauri-apps/plugin-store";
-import { DeepObject, createDeepProxy } from "../tool/proxy";
+import {  createDeepProxy } from "../tool/proxy";
 import { useRef, useState, useSyncExternalStore } from "react";
 
 
@@ -17,10 +17,13 @@ import { useRef, useState, useSyncExternalStore } from "react";
 ///   const child_key   //子区的key,可以是函数生成
 ///   const store       //仓库的实体
 export enum StoreFile {
-   BookData = "book_data.json",
-   BookGolbal = "book_golbal.json",
-   StateRecite = "state_recite.json",
-   Filter = "filter.json",
+   BookData    = "book_data.json"      , //存储每个单词本的数据
+   BookGolbal  = "book_golbal.json"    , //存储所有单词共有的数据,不受单词本的影响
+   Filter      = "filter.json"         , //存储过滤器的数据
+   Time        = "time.json"           , //存储耗时记录的数据
+   Setting     = "setting.json"        , //存储设置的数据
+   StateRecite = "state_recite.json"   , //存储背诵的状态
+   
 }
 
 
@@ -38,7 +41,7 @@ type Default<T> = () => T;
 export class StoreValue<V extends object> {
    private _store: Store;
    private _key: string;//它的key
-   private _value: DeepObject<V>;//sotre中实际存储的值
+   private _value: V;//sotre中实际存储的值
    private auto_set: boolean = true;//修改value是否自动存储到store,默认自动存储
    private auto_save: boolean = false;//修改value是否自动存储到磁盘,默认不自动存储
    private auto_log: boolean = true;//修改value是否自动输出log,默认自动输出log
@@ -76,7 +79,7 @@ export class StoreValue<V extends object> {
    }
 
    get key(): string { return this._key }
-   get value(): DeepObject<V> { return this._value }
+   get value(): V { return this._value }
    set value(v: V) {
       this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));
       if(this.auto_log){
@@ -94,7 +97,7 @@ export class StoreValue<V extends object> {
       this._store.set(this._key, this._value);
       this._store.save();
    }
-   private ChangeHandler(updatedObject: DeepObject<V>) {
+   private ChangeHandler(updatedObject: V) {
       if(this.auto_log){
          console.log(`此key<${this._key}>内容被修改,修改内容如下:`);
          console.log(updatedObject);

@@ -1,70 +1,97 @@
-import { startTransition, useEffect, useRef, useState } from "react";
-import ComReciteHide from "../../component/ComReciteHide";
-import { Button } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { BookWordMes } from "../../serve_app/word";
-import { TranslateType } from "../../serve_app/translation";
-import ComReciteShow from "../../component/ComReciteShow";
-import { now } from "../../tool/time";
-import { store_recite_state } from "../../serve_app/store_state/sotre_recite_state";
 import { store_book_data } from "../../serve_app/sotre_data/sotre_book_data";
-
+import { store_filter } from "../../serve_app/sotre_data/sotre_filter";
+import { useState } from "react";
+import { store_recite_state } from "../../serve_app/store_state/sotre_recite_state";
+import { Option } from "../../tool/option";
 
 
 
 const PageRecite = () => {
    const navigate = useNavigate();
-   
-   if (store_recite_state.value.value.book_name == undefined) {
-      navigate("/home/gate");
-   }
-   
-   // const book = store_book_data.store_books.value[store_recite_state.value.value.book_name as string];
-   // const [word, set_word] = useState<BookWordMes | "over">(() => store_recite_state.get_current_word());
-   // const [is_show, set_is_show] = useState(false);
-
-   // const set_score = (score: number) => {
-   //    if (word == "over") return;
-   //    book.value.word_list[word.word].score = score;
-   // }
 
 
-   // const yes_no = (score: number) => {
-   //    const word_mes = (word as BookWordMes);
-   //    set_score(book.value.word_list[word_mes.word].score + score);
-   //    //改变上次遇到这个单词的时间, 设置为 当前时间
-   //    book_data.store_books.set_word_time(book.value.book_name, word_mes.word, now());
-   //    if (score < 0) {//选择的不会
-   //       book_data.store_books.plus_word_no(book.value.book_name, word_mes.word);
-   //    } else if (score > 0) {//选择的会
-   //       book_data.store_books.plus_word_yes(book.value.book_name, word_mes.word);
-   //    }
-   //    set_word(sotre_state_recite.next_word())
-   //    set_is_show(false);
-   // }
-   // const on_show = () => {
-   //    set_is_show(true);
-   // }
 
-   return (<div style={{ height: "100vh" }}>
-      {
-         // word == "over" ?
-         //    <div>没有单词啦</div> :
-         //    is_show ?
-         //       <ComReciteShow mes={word}
-         //          translations={()=>sotre_state_recite.get_translation(word.word)}
-         //          index={sotre_state_recite.value.value.index + 1}
-         //          len={sotre_state_recite.value.value.word_list.length}
-         //          yes_no={yes_no} ></ComReciteShow>
-         //       :
-         //       <ComReciteHide mes={word}
-         //          translations={()=>sotre_state_recite.get_translation(word.word)}
-         //          index={sotre_state_recite.value.value.index + 1}
-         //          len={sotre_state_recite.value.value.word_list.length}
-         //          on_show={on_show}></ComReciteHide>
+   const Prepare = () => {
+      const book_list = store_book_data.get_all_book_name();
+      const filter_list = store_filter.get_all_filter_name();
+      (store_recite_state.value.value.book_name ).unwrap();
+      const [select_book,set_select_book] = useState<string|undefined>(()=>"")
+
+      const review = () => {
+
+      }
+      const continue_review = () => {
+
       }
 
-   </div>)
+      const Head = () => {
+         return <div className="flex flex-initial h-36 bg-green-100">
+
+         </div>
+      }
+      const Body = () => {
+         return <div className="flex flex-1 flex-col  h-full w-full">
+            <Select
+               label="选择将要复习的单词本"
+               selectionMode="single"
+               className="w-[80%] self-center"
+            >
+               {book_list.map((book_name) => (
+                  <SelectItem key={book_name} value={book_name} >
+                     {book_name}
+                  </SelectItem>
+               ))}
+            </Select>
+
+            <Select
+               label="选择将要使用的过滤器"
+               selectionMode="multiple"
+               className="w-[80%] self-center pt-4"
+            >
+               {filter_list.map((book_name) => (
+                  <SelectItem key={book_name} value={book_name} >
+                     {book_name}
+                  </SelectItem>
+               ))}
+            </Select>
+         </div>
+      }
+      const Foot = () => {
+         return <div className="flex flex-initial items-center justify-center gap-x-2 h-24 bg-rose-300">
+            <div className="flex items-center justify-center
+               rounded-md border-2 border-stone-300
+               transition-all
+               bg-slate-100 active:bg-blue-100 
+               w-[40%] active:w-[38%]
+               h-[40%] active:h-[38%]"
+               onClick={review}>
+               重新开始
+            </div>
+            <div className="flex items-center justify-center
+               rounded-md border-2 border-stone-300
+               transition-all
+               bg-slate-100 active:bg-blue-100 
+               w-[40%] active:w-[38%]
+               h-[40%] active:h-[38%]"
+               onClick={continue_review}>
+               继续复习
+            </div>
+         </div>
+      }
+      return <div className="flex flex-col w-full h-screen">
+         <Head></Head>
+         <Body></Body>
+         <Foot></Foot>
+      </div>
+   }
+
+   return (
+      <div className="w-full h-screen">
+         <Prepare></Prepare>
+      </div>
+   )
 }
 
 export default PageRecite;

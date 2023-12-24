@@ -76,7 +76,7 @@ export const store_recite_state: {
       this.index_translation = this.value.value.index;
       this.load_translation_map(15); //加载15个翻译结果
    },
-   get_current_word: function (): Promise<Result<Option<[BookWordMes, TranslateType]>, any>> {
+   get_current_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>> {
       const len = this.value.value.word_list.length;
       const index = this.value.value.index;
       return new Promise((resolve, reject) => {

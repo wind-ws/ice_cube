@@ -21,6 +21,13 @@ export class Option<T> {
          return none();
       }
    }
+   public match_none(none: () => T): T{
+      if (this._value[0] == "Some") {
+         return this._value[1];
+      } else {
+         return none();
+      }
+   }
    public is_some(): boolean {
       return this._value[0] == "Some";
    }
@@ -41,7 +48,21 @@ export class Option<T> {
          throw new Error("unwrap: 你应该通过逻辑确保,这个err绝对不会发生(该死,你看到这句话说明已经发生了)")
       }
    }
-   public unwrap_or(_default: () => T): T {
+   public unwrap_or(_default: T):T{
+      if (this._value[0] == "Some") {
+         return this._value[1]
+      } else {
+         return _default
+      }
+   }
+   public unwrap_or_else(_default: () => T): T {
+      if (this._value[0] == "Some") {
+         return this._value[1]
+      } else {
+         return _default()
+      }
+   }
+   public or<R>(_default: () => R):T|R {
       if (this._value[0] == "Some") {
          return this._value[1]
       } else {

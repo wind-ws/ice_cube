@@ -47,18 +47,18 @@ const hasOwn = (val:any, key:any) =>
 
 
 
-
-export type DeepObject<T> = {
-   [K in keyof T]: T[K] extends Record<string, any> ? DeepObject<T[K]> : T[K];
-};
+/// #oblish : 它影响了 Option包装,导致每次使用Option都要转换一下类型,所以这个标记类型也没必要在存在了
+// export type DeepObject<T> = {
+//    [K in keyof T]: T[K] extends Record<string, any> ? DeepObject<T[K]> : T[K];
+// };
 
 /// 注意: updatedObject 这个并不是 根部的对象 , 而是被修改的对象
 /// 例如 : obj.a.b.c ,修改 obj.a.b.c=0 ,updateObject是对象b
-export type ChangeHandler<T> = (updatedObject: DeepObject<T>) => void;
+export type ChangeHandler<T> = (updatedObject: T) => void;
 
 /// obj : 需要Proxy的对象
 /// onChange : 当值被修改时触发,对深层对象有用
-export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandler<T>): DeepObject<T> => {
+export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandler<T>):T => {
    const handler: ProxyHandler<T> = {
       get(target, prop, receiver) {
          const value = Reflect.get(target, prop, receiver);    
@@ -72,17 +72,17 @@ export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandle
       set(target, prop, value, receiver) {
          // 这里不用 把 是object的value 进行 createDeepProxy ,因为有get在, a.b 会调用get的
          Reflect.set(target, prop, value, receiver);
-         onChange(receiver as DeepObject<T>);
+         onChange(receiver as T);
          return true;
       },
       deleteProperty(target, prop) {
          Reflect.deleteProperty(target, prop);
-         onChange("delete" as DeepObject<T>);
+         onChange(target as T);
          return true;
       },
    };
 
-   return new Proxy(obj, handler) as DeepObject<T>;
+   return new Proxy(obj, handler) //as DeepObject<T>;
 }
 
 
