@@ -5,6 +5,8 @@
 /// 再次学习参考的文档:
 /// https://www.cnblogs.com/fqh123/p/16340077.html
 
+import { Option } from "./option";
+import { Result } from "./result";
 
 /// 创建一个具有标识的Proxy
 /// #abolish : 这个方法导致log输出的不必要的内容太多,观察起来太麻烦,所以废弃
@@ -61,7 +63,7 @@ export type ChangeHandler<T> = (updatedObject: T) => void;
 export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandler<T>):T => {
    const handler: ProxyHandler<T> = {
       get(target, prop, receiver) {
-         const value = Reflect.get(target, prop, receiver);    
+         const value = Reflect.get(target, prop, receiver);   
          if (isObject(value)) {//深层创建Proxy
             // 目前还没有办法去处理对一个对象的属性重复创建 Proxy的方法,因为没法判断这个属性是否已经被代理了
             // 或者把这个玩意的复杂度继续提升,否则只能这样了,一点性能而已,无伤大雅
@@ -81,8 +83,16 @@ export const createDeepProxy = <T extends object>(obj: T, onChange: ChangeHandle
          return true;
       },
    };
-
-   return new Proxy(obj, handler) //as DeepObject<T>;
+   //当Option存储后就变成普通的对象(从存储获取后没法调用Option的方法),在这里我们把它转为正常的Option
+   if(Object.keys(obj).some(v=>v == "_value_option")){
+      const result = new Option<any>((obj as {_value_option:any})._value_option) as T;
+      obj = {...obj,...result};
+   }
+   if(Object.keys(obj).some(v=>v == "_value_result")){//和上面一样,这个用来解决Result的问题
+      const result = new Result<any,any>((obj as {_value_result:any})._value_result) as T;
+      obj = {...obj,...result};
+   }
+   return new Proxy(obj, handler);
 }
 
 

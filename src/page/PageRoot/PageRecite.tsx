@@ -2,9 +2,9 @@ import { Autocomplete, AutocompleteItem, Select, SelectItem } from "@nextui-org/
 import { useNavigate } from "react-router-dom";
 import { store_book_data } from "../../serve_app/sotre_data/sotre_book_data";
 import { store_filter } from "../../serve_app/sotre_data/sotre_filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { store_recite_state } from "../../serve_app/store_state/sotre_recite_state";
-import { Option } from "../../tool/option";
+import { Option, none, some } from "../../tool/option";
 
 
 
@@ -16,9 +16,32 @@ const PageRecite = () => {
    const Prepare = () => {
       const book_list = store_book_data.get_all_book_name();
       const filter_list = store_filter.get_all_filter_name();
-      (store_recite_state.value.value.book_name ).unwrap();
-      const [select_book,set_select_book] = useState<string|undefined>(()=>"")
+      try {
+         // store_recite_state.value.value.book_name=some({a:"abc"});
+         // store_recite_state.value.save();
+         console.log(store_recite_state.value.value.book_name);
 
+
+         // (store_recite_state.value.value.book_name).unwrap()
+         // store_recite_state.value.value.book_name = some("123");
+         // (store_recite_state.value.value.book_name).match_none(()=>"");
+         // console.log( store_recite_state.value.value.book_name instanceof Option);
+         
+      } catch (error) {
+         console.warn(error);
+         
+      }
+      const [select_book, set_select_book] = useState<string[]>(
+         () => [])
+      // useEffect(() => {
+      //    store_recite_state.value.value.book_name = Option.from_undefined(select_book[0]);
+      // }, [select_book])
+      // const [select_filter, set_select_filter] = useState<string[]>(
+      //    () => store_recite_state.value.value.filters)
+      // useEffect(() => {
+      //    store_recite_state.value.value.filters = select_filter;
+      // }, [select_filter])
+      
       const review = () => {
 
       }
@@ -36,6 +59,8 @@ const PageRecite = () => {
             <Select
                label="选择将要复习的单词本"
                selectionMode="single"
+               // selectedKeys={undefined}
+               // onSelectionChange={v=>set_select_book(Array.from(v).map(v => v.toString()))}
                className="w-[80%] self-center"
             >
                {book_list.map((book_name) => (
@@ -48,6 +73,8 @@ const PageRecite = () => {
             <Select
                label="选择将要使用的过滤器"
                selectionMode="multiple"
+               // selectedKeys={select_filter}
+               // onSelectionChange={v=>set_select_filter(Array.from(v).map(v => v.toString()))}
                className="w-[80%] self-center pt-4"
             >
                {filter_list.map((book_name) => (
