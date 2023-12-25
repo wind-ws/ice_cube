@@ -25,5 +25,12 @@ export class Result<T, E> {
    public is_err(): boolean {
       return this._value_result[0] == "Err";
    }
+   public unwrap():T{
+      if (this._value_result[0] == "Ok") {
+         return this._value_result[1]
+      } else {
+         throw new Error("unwrap: 你应该通过逻辑确保,这个err绝对不会发生(该死,你看到这句话说明已经发生了)")
+      }
+   }
 
 }

@@ -2,29 +2,29 @@ import { useEffect, useRef, useState } from "react"
 import { BookWordMes } from "../serve_app/word";
 import { TranslateType } from "../serve_app/translation";
 import { Button, Chip } from "@nextui-org/react";
-import { sotre_state_recite } from "../serve_app/state/state_recite";
 import { get_differ_days, get_ymd } from "../tool/time";
-import { book_golbal } from "../serve_app/sotre/store_book";
 import { Icons } from "../serve_app/icons";
+import { store_word_golbal } from "../serve_app/sotre_data/store_word_golbal";
 
 type Props = {
    mes: BookWordMes,
+   translations:TranslateType,//翻译结果
    index: number,//当前复习的地方
    len: number,//单词列表的总长度
-   translations: ()=>TranslateType,//翻译结果
+   
    on_show: () => void,//告诉 父组件,要触发展开
 }
 
 /// 隐藏单词意思的组件,即未展开状态
 const ComReciteHide = ({ mes,index,len,translations, on_show }: Props) => {
 
-   const [star, set_star] = useState(()=>book_golbal.store_golbal.get_star(mes.word));
+   const [star, set_star] = useState(()=>store_word_golbal.get_star(mes.word));
    useEffect(() => {
-      book_golbal.store_golbal.set_star(mes.word, star);
+      store_word_golbal.set_star(mes.word, star);
    }, [star]);
 
    const play_audio = () => {
-      translations().audio.play()
+      translations.audio.play()
    }
 
    const Head = () => {

@@ -3,6 +3,8 @@ import { BookWordMes } from "../word";
 import { StoreFile, StoreValue, creat_key } from "../store";
 import { Option, some } from "../../tool/option";
 import { Result, err, ok } from "../../tool/result";
+import { store_word_golbal } from "./store_word_golbal";
+import { panic } from "../../tool/auxiliary_fn";
 
 
 const default_key = StoreFile.BookData;
@@ -68,7 +70,7 @@ export const store_book_data: {
    /// true:创建成功, false: 重复key,创建失败
    creat_book(book_name: string): Promise<boolean>,
    /// 删除一本单词本
-   delete_book(book_name: string): void,
+   delete_book(book_name: string): Promise<void>,
    /// 获取一本单词书的实际操作
    get_book(book_name: string): {
       /// 把单词推进指定的单词本, is_replace=true 若以存在则替换
@@ -89,6 +91,10 @@ export const store_book_data: {
       plus_word_no(word: string): void,
       /// 调用StoreValue中的save
       save(): void,
+      /// 获得单词的数量
+      len(): number,
+      /// 获得单词被star的数量(true的数量)
+      star_len(): number,
    },
 } = {
    value: (() => {//加载所有已经存在的单词本
@@ -120,12 +126,15 @@ export const store_book_data: {
          }).catch(e => reject(e));
       })
    },
-   delete_book(book_name: string) {
-      const key = get_key_from_name(book_name);
-      store.delete(key)
-         .then(v => {//删除成功
-            delete store_book_data.value[book_name];
-         })
+   delete_book(book_name: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+         const key = get_key_from_name(book_name);
+         store.delete(key)
+            .then(v => {//删除成功
+               delete store_book_data.value[book_name];
+               resolve();
+            }).catch(e=>{resolve()})
+      })
    },
    get_book(book_name: string) {
       const book = store_book_data.value[book_name];
@@ -139,9 +148,9 @@ export const store_book_data: {
             }
          },
          put_word_list(word_list: WordList, is_replace: boolean): void {
-            book.auto_set =false;//导入大量单词时关闭自动插入
+            book.auto_set_off();//导入大量单词时关闭自动插入
             Object.values(word_list).forEach(word => this.put_word(word, is_replace));
-            book.auto_set =true;
+            book.auto_set_default();
             this.save();
          },
          get_all_word_mes(): WordList {
@@ -164,6 +173,20 @@ export const store_book_data: {
          },
          save(): void {
             book.save();
+         },
+         len(): number {
+            return Object.keys(book.value.word_list).length;
+         },
+         star_len(): number {
+            store_word_golbal.value.auto_log_off();
+            store_word_golbal.value.auto_set_off();
+            const len = Object.keys(book.value.word_list)
+               .map(word=>store_word_golbal.get_star(word))
+               .filter(v=>v).length;
+            store_word_golbal.value.auto_log_default();
+            store_word_golbal.value.auto_set_default();
+            store_word_golbal.value.save();
+            return len;
          }
 
       }

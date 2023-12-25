@@ -1,12 +1,11 @@
 import { Button, Chip, Textarea } from "@nextui-org/react"
-import { book_golbal } from "../serve_app/sotre/store_book"
 import { BookWordMes, score_add as _score_add, score_subtract } from "../serve_app/word"
-import { sotre_state_recite } from "../serve_app/state/state_recite"
 import { get_differ_days, get_ymd } from "../tool/time"
 import { useEffect, useRef, useState } from "react"
 import { Icons } from "../serve_app/icons"
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
 import { TranslateType } from "../serve_app/translation"
+import { store_word_golbal } from "../serve_app/sotre_data/store_word_golbal"
 
 
 type Props = {
@@ -19,13 +18,13 @@ type Props = {
 
 const ComReciteShow = ({ mes,index,len,translations, yes_no }: Props) => {
    const { isOpen, onOpen, onClose } = useDisclosure();
-   const [star, set_star] = useState(() => book_golbal.store_golbal.get_star(mes.word));
+   const [star, set_star] = useState(() => store_word_golbal.get_star(mes.word));
    useEffect(() => {
-      book_golbal.store_golbal.set_star(mes.word, star);
+      store_word_golbal.set_star(mes.word, star);
    }, [star]);
-   const [note, set_note] = useState(() => book_golbal.store_golbal.get_note(mes.word));
+   const [note, set_note] = useState(() => store_word_golbal.get_note(mes.word));
    useEffect(() => {
-      book_golbal.store_golbal.set_note(mes.word,note);
+      store_word_golbal.set_note(mes.word,note);
    }, [note]);
    
    const [score_sub, set_score_sub] = useState(() => score_subtract(mes.score));

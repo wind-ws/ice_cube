@@ -9,6 +9,7 @@ import { store_book_data } from "../sotre_data/sotre_book_data";
 import { store_filter } from "../sotre_data/sotre_filter";
 import { get_random_int } from "../../tool/random";
 import { todo } from "../../tool/auxiliary_fn";
+import { debug_time } from "../../tool/debug";
 
 const default_key = StoreFile.StateRecite;
 const store = new Store(StoreFile.StateRecite);
@@ -43,16 +44,18 @@ export const store_recite_state: {
    /// 加载,不初始化,继续使用之前的状态
    load(): void,
    /// 获取当前下标的单词,用于初始化获取单词
+   /// todo : 返回值改成 Option<BookWordMes>
    get_current_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>>,
    /// ok(None):表示没有下一个单词啦~ 
    /// err(any):err的情况有 [翻译未加载完成,没网,...]
+   /// todo : 返回值改成 Option<BookWordMes>
    next_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>>,
    /// 加载翻译,num:加载num个翻译
    load_translation_map(num: number): void,
    /// 获取翻译, none表示翻译未加载完成(map里还没有当前单词的翻译)
    get_translation(word_name: string): Option<TranslateType>,
 } = {
-   value: new StoreValue(store, default_key, default_recite_state),
+   value: new StoreValue(store, default_key, default_recite_state,true,false,false),
    translation_map: {},
    index_translation: 0,
    over_load(book_name: string, filters: StoreFilter[]): void {
@@ -89,7 +92,7 @@ export const store_recite_state: {
          this.get_translation(word.word).match(v => {
             resolve(ok(some([word, v])));
          }, () => {
-            translate(word.word).then(v => {
+            translate(word.word).then(v => {//todo:优化:这个执行需要消耗3s的时间(nnd,io流居然这么慢)
                resolve(ok(some([word, v])));
             });
          });

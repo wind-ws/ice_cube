@@ -15,23 +15,25 @@ export const store_filter : {
    get_filter(name:string):Option<StoreFilter>,
    set_filter(filter:StoreFilter):void,
    get_all_filter_name():string[],
+   delete_filter(name:string):void,
    // delete_all_filter():void,//删除所有过滤器(这只是一个为了方便而出现的函数,未来它不应该存在)
 } = {
-   value: new StoreValue(store,default_key,()=>({}),true,true),
+   value: new StoreValue(store, default_key, () => ({}), true, true),
    get_filter(name: string): Option<StoreFilter> {
-      if(this.value.value[name] == undefined){
+      if (this.value.value[name] == undefined) {
          return none();
-      }else {
-         return some(this.value.value[name]) 
+      } else {
+         return some(this.value.value[name]);
       }
    },
    set_filter(filter: StoreFilter): void {
       this.value.value[filter.name] = filter;
    },
    get_all_filter_name(): string[] {
-      return Object.keys(this.value.value)
+      return Object.keys(this.value.value);
    },
-   // delete_all_filter(): void {
-   //    throw new Error("Function not implemented.");
-   // }
+   delete_filter(name: string): void {
+      delete this.value.value[name];
+      this.value.save();
+   }
 }

@@ -42,10 +42,14 @@ export class StoreValue<V extends object> {
    private _store: Store;
    private _key: string;//它的key
    private _value: V;//sotre中实际存储的值
-   public auto_set: boolean;//修改value是否自动存储到store,默认自动存储
-   public auto_save: boolean;//修改value是否自动存储到磁盘,默认不自动存储
-   public auto_log: boolean;//修改value是否自动输出log,默认自动输出log
-
+   private auto_set: boolean;//修改value是否自动存储到store,默认自动存储
+   private auto_save: boolean;//修改value是否自动存储到磁盘,默认不自动存储
+   private auto_log: boolean;//修改value是否自动输出log,默认自动输出log
+   private auto_init: {// 所有auto的初始值, 通过构造函数的初始值,构造后这个值不可修改
+      auto_set: boolean,
+      auto_save: boolean,
+      auto_log: boolean
+   }
    // app的所有key都在这里,且它是用来判断 所有的文件是否已经加载到内存,是否已经加载到当前的_value里
    // key:true 就是当前key加载完成, key:false 就是当前key没有加载完成
    public static load_progress: { [key: string]: boolean } = {};
@@ -67,6 +71,11 @@ export class StoreValue<V extends object> {
       this.auto_set = auto_set;
       this.auto_save = auto_save;
       this.auto_log = auto_log;
+      this.auto_init = {
+         auto_set,
+         auto_save,
+         auto_log
+      }
       this._value = createDeepProxy(_default(), (v) => this.ChangeHandler(v));
       this._store.get<V>(key).then(v => {//自动加载
          if (!v) {//值不存在,初始化sotre
@@ -109,5 +118,34 @@ export class StoreValue<V extends object> {
          this.save();
       }
    }
+
+   public auto_set_on(){
+      this.auto_set = true;
+   }
+   public auto_set_off(){
+      this.auto_set = false;
+   }
+   public auto_set_default(){
+      this.auto_set = this.auto_init.auto_set;
+   }
+   public auto_log_on(){
+      this.auto_log = true;
+   }
+   public auto_log_off(){
+      this.auto_log = false;
+   }
+   public auto_log_default(){
+      this.auto_log = this.auto_init.auto_log;
+   }
+   public auto_save_on(){
+      this.auto_save = true;
+   }
+   public auto_save_off(){
+      this.auto_save = false;
+   }
+   public auto_save_default(){
+      this.auto_save = this.auto_init.auto_save;
+   }
+
 }
 

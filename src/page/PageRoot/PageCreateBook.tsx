@@ -24,12 +24,12 @@ const PageCreateBook = () => {
       }
       store_book_data.creat_book(book_name).then(b => {
          if (b) {
-            (async () => {// todo:我日,这里必须做优化,导入2000个单词大概要分析15秒左右 
+            (async () => {// todo:现在导入5000词大概分析2秒(核心优化点在关闭自动插入),勉勉强强可以接受了,以后管他
                let word_list: WordList = {};
                for(let i=0;i<select_premake_book.length;i++) {
                   const premake_book_name = select_premake_book[i];
                   const txt = await get_premake_book_txt(premake_book_name);
-                  word_list = { ...word_list, ...parse(txt) }// todo: 优化:这里有大量拷贝值,
+                  word_list = { ...word_list, ...parse(txt) }// todo: 优化:这里有大量拷贝值
                }
                store_book_data.get_book(book_name).put_word_list(word_list, false);
                Toast.show("创建完成,一共"+Object.keys(word_list).length + "个单词")
