@@ -1,6 +1,7 @@
 import { Badge, TabBar } from 'antd-mobile'
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Icons } from '../../serve_app/icons';
+import { is_release } from '../../tool/condiction';
 
 const PageHome = () => {
    const navigate = useNavigate();
@@ -31,14 +32,13 @@ const PageHome = () => {
                <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-blue-300' />
                : <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-slate-400' />,
             title: '我自己哦!',
-         },{
+         },!is_release ? {
             key: '/home/debug',
             icon: (active: boolean) => active ?
                <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-blue-300' />
                : <Icons.HeroiconsOutline.Cog6ToothIcon className='w-full h-full text-slate-400' />,
             title: 'debug',
-         }
-      
+         }:{}
       ]
       return (
          <div className=" bg-slate-50 w-full h-12"

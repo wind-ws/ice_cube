@@ -1,5 +1,5 @@
 import { Store } from "@tauri-apps/plugin-store";
-import { BookWordMes } from "../word";
+import { BookWordMes, set_first_time } from "../word";
 import { StoreFile, StoreValue, creat_key } from "../store";
 import { Option, some } from "../../tool/option";
 import { Result, err, ok } from "../../tool/result";
@@ -85,6 +85,10 @@ export const store_book_data: {
       delete_all_word(): void,
       /// 设置一本单词书中一个单词的last_time
       set_word_time(word: string, time: number): void,
+      /// 设置一本单词书中一个单词的score
+      set_word_score(word: string, score: number): void,
+      /// 设置一本单词书中一个单词的first_time
+      set_word_first_time(word: string): void,
       /// 对一个单词本的单词的yes 加1
       plus_word_yes(word: string): void,
       /// 对一个单词本的单词的no 加1
@@ -95,6 +99,8 @@ export const store_book_data: {
       len(): number,
       /// 获得单词被star的数量(true的数量)
       star_len(): number,
+      /// 获得当前单词的所有信息
+      get_mes(word: string): BookWordMes,
    },
 } = {
    value: (() => {//加载所有已经存在的单词本
@@ -133,7 +139,8 @@ export const store_book_data: {
             .then(v => {//删除成功
                delete store_book_data.value[book_name];
                resolve();
-            }).catch(e=>{resolve()})
+            }).catch(e => { resolve() })
+         store.save()
       })
    },
    get_book(book_name: string) {
@@ -165,6 +172,12 @@ export const store_book_data: {
          set_word_time(word: string, time: number): void {
             book.value.word_list[word].last_time = time;
          },
+         set_word_score(word: string, score: number): void {
+            book.value.word_list[word].score = score;
+         },
+         set_word_first_time(word: string): void {
+            book.value.word_list[word] = set_first_time(book.value.word_list[word])
+         },
          plus_word_yes(word: string): void {
             book.value.word_list[word].yes = book.value.word_list[word].yes + 1;
          },
@@ -181,12 +194,15 @@ export const store_book_data: {
             store_word_golbal.value.auto_log_off();
             store_word_golbal.value.auto_set_off();
             const len = Object.keys(book.value.word_list)
-               .map(word=>store_word_golbal.get_star(word))
-               .filter(v=>v).length;
+               .map(word => store_word_golbal.get_star(word))
+               .filter(v => v).length;
             store_word_golbal.value.auto_log_default();
             store_word_golbal.value.auto_set_default();
             store_word_golbal.value.save();
             return len;
+         },
+         get_mes(word: string): BookWordMes {
+            return book.value.word_list[word]
          }
 
       }

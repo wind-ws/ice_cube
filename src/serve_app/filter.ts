@@ -35,6 +35,15 @@ export type StoreFilter = {
    yes_no: null // 对yes和no进行筛选 ,过滤高优先级
    | ["yes>=no"] // yes大于等于no
    | ["no>=yes"] // no 大于等于yes
+   | ["yes=no=0"] // 一次都没有遇到过的单词
+   ,
+   // 解释一下这个过滤属性的用法:
+   // 它可以赋予单词本 背单词的能力(而非复习)
+   // 例如: 今天你背了20个单词(第一次遇到的单词(通过"yes=no=0"筛选))
+   //    明天想回顾一下这20个单词,就可以通过这个过滤器达到,后天在回顾10个,大后天5个...(你随意调控)
+   //    如果没有这个,只是用"time_range.in"进行控制,是会获取 昨天所有遇到的单词(而非 昨天第一次遇到的单词)
+   first_time : null // 根据 第一次遇到单词的时间 进行筛选
+   | ["in",number,number] // [0,7] ,范围是 现在 到 7天前
    //todo:...
 }
 
@@ -85,6 +94,23 @@ const filter_word_list = (filter: StoreFilter, word_list: BookWordMes[]): BookWo
          case "no>=yes": {
             ret_word_list = ret_word_list.filter(mes => mes.no >= mes.yes);
          } break;
+         case "yes=no=0":{
+            ret_word_list = ret_word_list.filter(mes => mes.no == 0 && mes.yes == 0);
+         }break;
+      }
+   }
+   if (filter.first_time != null){
+      switch (filter.first_time[0]){
+         case "in": {
+            const [_, a, b] = filter.first_time;
+            ret_word_list = ret_word_list.filter(mes => {
+               const time = mes.first_time;
+               const _day = day(time);
+               const now_day = day(now());
+               const c = now_day - _day;//多少天没遇见了
+               return a <= c && c <= b
+            })
+         }break;
       }
    }
 

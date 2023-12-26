@@ -17,6 +17,8 @@ const store = new Store(StoreFile.StateRecite);
 export type StateRecite = {
    book_name: Option<string>,//当前背诵的单词本
    filters: string[],//选择的过滤器
+   // todo : 改成 word_list:string[]
+   // ! : 现在应该避免使用 非 BookWordMes.word 中的其他属性 ,因为存在 存储数据和存储状态不同步 的隐患
    word_list: BookWordMes[],// 从 book_name 中通过filters后的word_list
    index: number,//当前背诵到的下标
    // random_mode:boolean,//是否是随机模式,
@@ -44,12 +46,9 @@ export const store_recite_state: {
    /// 加载,不初始化,继续使用之前的状态
    load(): void,
    /// 获取当前下标的单词,用于初始化获取单词
-   /// todo : 返回值改成 Option<BookWordMes>
-   get_current_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>>,
-   /// ok(None):表示没有下一个单词啦~ 
-   /// err(any):err的情况有 [翻译未加载完成,没网,...]
-   /// todo : 返回值改成 Option<BookWordMes>
-   next_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>>,
+   get_current_word(): Option<BookWordMes>,
+   /// None:表示没有下一个单词啦~ 
+   next_word(): Option<BookWordMes>,
    /// 加载翻译,num:加载num个翻译
    load_translation_map(num: number): void,
    /// 获取翻译, none表示翻译未加载完成(map里还没有当前单词的翻译)
@@ -76,51 +75,37 @@ export const store_recite_state: {
       this.load_translation_map(15); //加载15个翻译结果
    },
    load(): void {
+      // 同步翻译下标
       this.index_translation = this.value.value.index;
       this.load_translation_map(15); //加载15个翻译结果
    },
-   get_current_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>> {
+   get_current_word(): Option<BookWordMes> {
       const len = this.value.value.word_list.length;
       const index = this.value.value.index;
-      return new Promise((resolve, reject) => {
-         if (index == len) {// 当前index已经是word_list的上限
-            return resolve(ok(none()));
-         }
-         this.index_translation = index;
-         this.load_translation_map(15);
-         const word = this.value.value.word_list[index];
-         this.get_translation(word.word).match(v => {
-            resolve(ok(some([word, v])));
-         }, () => {
-            translate(word.word).then(v => {//todo:优化:这个执行需要消耗3s的时间(nnd,io流居然这么慢)
-               resolve(ok(some([word, v])));
-            });
-         });
-      })
+      if (index == len) {// 当前index已经是word_list的上限
+         return none()
+      }
+      this.index_translation = index;
+      this.load_translation_map(15);
+      const word = this.value.value.word_list[index];
+      return some(word);
    },
-   next_word(): Promise<Result<Option<[BookWordMes, TranslateType]>, any>> {
+   next_word(): Option<BookWordMes> {
       const len = this.value.value.word_list.length;
       const index = this.value.value.index;
-      return new Promise((resolve, reject) => {
-         if (index + 1 == len) { // 当前index已经是word_list的上限,无法获取下一个
-            return resolve(ok(none()));
-         }
-         if (this.index_translation < index + 1) { //防止内存刷新(软件重新加载),导致this.index_translation==0
-            this.index_translation = index + 1;
-         }
-         if (this.index_translation <= index + 10 + 1) { //提前10个 触发翻译
-            this.load_translation_map(15); //加载15个翻译结果
-         }
+      if (index + 1 >= len) { // 当前index已经是word_list的上限,无法获取下一个
          this.value.value.index++;
-         const word = this.value.value.word_list[index + 1];
-         this.get_translation(word.word).match(v => {
-            resolve(ok(some([word, v])));
-         }, () => {
-            translate(word.word).then(v => {
-               resolve(ok(some([word, v])));
-            });
-         });
-      });
+         return none();
+      }
+      if (this.index_translation < index + 1) { //防止内存刷新(软件重新加载),导致this.index_translation==0
+         this.index_translation = index + 1;
+      }
+      if (this.index_translation <= index + 10 + 1) { //提前10个 触发翻译
+         this.load_translation_map(15); //加载15个翻译结果
+      }
+      this.value.value.index++;
+      const word = this.value.value.word_list[index + 1];
+      return some(word)
    },
    load_translation_map(num: number): void {
       const len = this.value.value.word_list.length;

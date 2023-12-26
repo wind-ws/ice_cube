@@ -1,7 +1,7 @@
 
 
 
-export const debug_time_record = (name: string = "署名") => {
+const debug_time_record = (name: string = "署名") => {
    const time = {
       name: name,
       ms: 0,//毫秒

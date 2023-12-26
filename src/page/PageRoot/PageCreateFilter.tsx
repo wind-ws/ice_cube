@@ -15,6 +15,7 @@ const PageCreateFilter = () => {
    const [score_range, set_score_range] = useState<StoreFilter["score_range"]>(null);
    const [time_range, set_time_range] = useState<StoreFilter["time_range"]>(null);
    const [yes_no, set_yes_no] = useState<StoreFilter["yes_no"]>(null);
+   const [first_time, set_first_time] = useState<StoreFilter["first_time"]>(null);
    const save = () => {
       if (name.length == 0) {
          Toast.show("名字不能为空")
@@ -27,13 +28,14 @@ const PageCreateFilter = () => {
          is_star: star,
          score_range: score_range,
          time_range: time_range,
-         yes_no: yes_no
+         yes_no: yes_no,
+         first_time:first_time
       }
       store_filter.set_filter(filter);
       store_filter.value.save();
       Toast.show("保存成功")
    }
-   return (<>
+   return (<div className="px-2">
       <pre className="whitespace-pre-wrap">
          {"提醒1: 若没有限制最大单词量, 尽可能什么什么的并不会进行筛选\n"}
          {"提醒2: 筛选后会对单词组随机排序\n"}
@@ -86,7 +88,7 @@ const PageCreateFilter = () => {
          /> : null
       }
       <RadioGroup
-         label="时间控制"
+         label="根据最近遇到单词的时间控制"
          value={time_range == null ? "null" : time_range[0]}
          onValueChange={v => {
             switch (v) {
@@ -119,18 +121,43 @@ const PageCreateFilter = () => {
             switch (v) {
                case "yes>=no": { set_yes_no(["yes>=no"]) } break;
                case "no>=yes": { set_yes_no(["no>=yes"]) } break;
+               case "yes=no=0":{ set_yes_no(["yes=no=0"]) } break;
                case "null": { set_yes_no(null) } break;
             }
          }}
          orientation="horizontal">
          <Radio value="yes>=no">正确的次数大于等于错误的次数</Radio>
          <Radio value="no>=yes">错误的次数大于等于正确的次数</Radio>
+         <Radio value="yes=no=0">一次都没遇见过的单词</Radio>
          <Radio value="null">不关心</Radio>
       </RadioGroup>
+      <RadioGroup
+         label="根据第一次遇到单词的时间控制"
+         value={first_time == null ? "null" : first_time[0]}
+         onValueChange={v => {
+            switch (v) {
+               case "in": { set_first_time(["in", 0, 3]) } break;
+               case "null": { set_first_time(null) } break;
+            }
+         }}
+         orientation="horizontal">
+         <Radio value="in">区间控制</Radio>
+         <Radio value="null">不关心</Radio>
+      </RadioGroup>
+      {
+         first_time?.[0] == "in" ? <Slider
+            label="区间控制-([0,3],现在到过去7天第一次遇到的单词)"
+            step={1}
+            maxValue={125}
+            minValue={0}
+            value={[first_time[1], first_time[2]]}
+            onChange={(v) => Array.isArray(v) ? set_first_time(["in", v[0], v[1]]) : null}
+         /> : null
+      }
       <Button onPress={() => navigate(-1)} >返回</Button>
       <Button color="success" onPress={save} >保存</Button>
 
-   </>)
+   </div>)
 }
 
 export default PageCreateFilter

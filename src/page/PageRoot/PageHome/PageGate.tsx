@@ -20,7 +20,7 @@ const PageGate = () => {
       </div>
    }
    const Foot = () => {
-      return <div className="flex flex-initial items-center justify-center h-24 bg-rose-300">
+      return <div className="flex flex-initial items-center justify-center h-24 ">
          <div className="flex items-center justify-center
             rounded-md border-2 border-stone-300
             transition-all
