@@ -9,6 +9,7 @@ import PageCreateFilter from "./page/PageRoot/PageCreateFilter";
 import PageDebug from "./page/PageRoot/PageHome/PageDebug";
 import PageLoad from "./page/PageLoad";
 import PageCreateBook from "./page/PageRoot/PageCreateBook";
+import PageWatchWordList from "./page/PageRoot/PageWatchWordList";
 
 
 function App() {
@@ -34,6 +35,7 @@ const MyRoutes = () => {
             <Route path="/recite" element={<PageRecite />} />
             <Route path="/create_filter" element={<PageCreateFilter />} />
             <Route path="/create_book" element={<PageCreateBook />} />
+            <Route path="/watch_word_list/:book_name" element={<PageWatchWordList/>} />
          </Route>
       </Routes>
    )

@@ -27,7 +27,7 @@ const ComBookCard = ({ book_name, on_delete_book }: Props) => {
       navigate(`/parse/${book_name}`);
    }
    const watch = () => {
-
+      navigate(`/watch_word_list/${book_name}`)
    }
    const copy = () => {
 
@@ -58,7 +58,7 @@ const ComBookCard = ({ book_name, on_delete_book }: Props) => {
          </DropdownTrigger>
          <DropdownMenu
             aria-label="Static Actions"
-            disabledKeys={["copy", "watch", "filter_delete_word"]}>
+            disabledKeys={["copy", "filter_delete_word"]}>
             <DropdownItem key="add" onPress={add_word}>添加单词</DropdownItem>
             <DropdownItem key="watch" onPress={watch} >查看单词列表</DropdownItem>
             <DropdownItem key="copy" onPress={copy} >繁殖</DropdownItem>
