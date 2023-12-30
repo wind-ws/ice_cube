@@ -1,4 +1,5 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import { useCallback } from "react";
 
 
 type Props = {
@@ -12,15 +13,15 @@ type Props = {
 const ComWordList = ({ book_name, word_list, on_change_word_list }: Props) => {
    // todo : 要解决大量数据渲染列表的性能问题
    //    使用 useCallback 和 一次只渲染部分列表
+   const list = useCallback(()=>word_list,[word_list]) 
    
-
    return <div className="flex ">
       <Accordion selectionMode="multiple"
          className="flex  flex-col "
          itemClasses={{}}
          >
          {
-            word_list.map(word => <AccordionItem
+            list().map(word => <AccordionItem
                classNames={{base:"base-classes"}}
                key={word}
                subtitle={

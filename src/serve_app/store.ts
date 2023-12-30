@@ -22,6 +22,7 @@ export enum StoreFile {
    Filter = "filter.json", //存储过滤器的数据
    Time = "time.json", //存储耗时记录的数据
    Setting = "setting.json", //存储设置的数据
+   TranslationButter = "translation_butter.json", //翻译缓存存储的数据
    StateRecite = "state_recite.json", //存储背诵的状态
 
 }

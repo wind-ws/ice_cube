@@ -13,7 +13,7 @@ const proxy_translate_text_url =
 const translate_text_url =
    (word: string): string => `https://dict-mobile.iciba.com/interface/index.php?c=word&m=getsuggest&nums=1&is_need_mean=1&word=${word}`;
 /// 使用的地址
-const use_translate_text_url = (word: string): string =>
+export const use_translate_text_url = (word: string): string =>
    is_release ? translate_text_url(word) : proxy_translate_text_url(word)
 
 /// 通过代理访问
@@ -23,18 +23,18 @@ const proxy_translate_audio_url =
 const translate_audio_url =
    (word: string): string => `https://dict.youdao.com/dictvoice?audio=${word}&type=2`;
 /// 使用的地址
-const use_translate_audio_url = (word: string): string =>
+export const use_translate_audio_url = (word: string): string =>
    is_release ? translate_audio_url(word) : proxy_translate_audio_url(word)
 
 /// 翻译后返回的类型 (只取了需要的部分)
 export type TranslateType = {
-   key: string,//单词本身
-   paraphrase: string,//释义(means的整合)
-   means: {//更加精准的释义()
+   readonly word: string,//单词本身
+   readonly paraphrase: string,//释义(means的整合)
+   readonly means: {//更加精准的释义()
       part: string,//词性
       means: string[]//释义
    }[],
-   audio: Howl,//音频 (不清楚它是在play时发起请求,还是在new时就发起请求(把数据缓存起来了))
+   readonly audio: Howl,//音频 (在new的时候就发起请求(缓存音频))
 }
 
 /// 翻译
@@ -52,9 +52,10 @@ export const translate = async (word: string): Promise<TranslateType> => {
                const audio = new Howl({
                   src: audio_url,
                   format: "mpeg",
+                  preload: true,
                });
                translation = {
-                  key: data.key,
+                  word: data.key,
                   paraphrase: data.paraphrase,
                   means: data.means,
                   audio: audio
@@ -68,9 +69,10 @@ export const translate = async (word: string): Promise<TranslateType> => {
             const audio = new Howl({
                src: audio_url,
                format: "mpeg",
+               preload: true,
             });
             translation = {
-               key: data.key,
+               word: data.key,
                paraphrase: data.paraphrase,
                means: data.means,
                audio: audio
@@ -78,10 +80,6 @@ export const translate = async (word: string): Promise<TranslateType> => {
             resolve(translation)
          }).catch(e => reject(e));
       }
-
-
-
-
 
    })
 }

@@ -1,3 +1,5 @@
+import { Store } from "@tauri-apps/plugin-store";
+import { translate } from "../../../serve_app/translation"
 
 
 

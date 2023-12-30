@@ -10,6 +10,7 @@ import { store_filter } from "../sotre_data/sotre_filter";
 import { get_random_int } from "../../tool/random";
 import { todo } from "../../tool/auxiliary_fn";
 import { debug_time } from "../../tool/debug";
+import { store_translation_buffer } from "../sotre_data/store_translation_buffer";
 
 const default_key = StoreFile.StateRecite;
 const store = new Store(StoreFile.StateRecite);
@@ -38,7 +39,7 @@ const default_recite_state = (): StateRecite => {
 export const store_recite_state: {
    value: StoreValue<StateRecite>,
    /// 翻译存储
-   translation_map: { [word: string]: TranslateType },
+   // translation_map: { [word: string]: TranslateType },
    /// 翻译到的下标 
    index_translation: number,
    /// 重新加载value,全部状态初始化
@@ -55,7 +56,7 @@ export const store_recite_state: {
    get_translation(word_name: string): Option<TranslateType>,
 } = {
    value: new StoreValue(store, default_key, default_recite_state,true,false,false),
-   translation_map: {},
+   // translation_map: {},
    index_translation: 0,
    over_load(book_name: string, filters: StoreFilter[]): void {
       const recite_state: StateRecite = {
@@ -65,7 +66,7 @@ export const store_recite_state: {
          index: 0,
       };
       this.index_translation = 0;
-      this.translation_map = {};
+      // this.translation_map = {};
       this.value.value = recite_state;
       // 过滤
       this.value.value.word_list = filters_word_list(this.value.value.filters.map(v => store_filter.get_filter(v).unwrap()
@@ -114,17 +115,11 @@ export const store_recite_state: {
             if (this.index_translation == len) return; ///翻译以到上限,停止后面的执行
             const word = this.value.value.word_list[this.index_translation].word;
             this.index_translation++;
-            translate(word).then(v => {
-               this.translation_map[word] = v;
-            });
+            store_translation_buffer.updata(word);
          });
    },
    get_translation(word_name: string): Option<TranslateType> {
-      if (this.translation_map[word_name] == undefined) {
-         return none();
-      } else {
-         return some(this.translation_map[word_name]);
-      }
+      return store_translation_buffer.get_translation(word_name);
    },
 
 }
