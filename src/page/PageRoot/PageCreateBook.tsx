@@ -32,6 +32,7 @@ const PageCreateBook = () => {
                   word_list = { ...word_list, ...parse(txt) }// todo: 优化:这里有大量拷贝值
                }
                store_book_data.get_book(book_name).put_word_list(word_list, false);
+               store_book_data.get_book(book_name).save();
                Toast.show("创建完成,一共"+Object.keys(word_list).length + "个单词")
             })()
          } else {

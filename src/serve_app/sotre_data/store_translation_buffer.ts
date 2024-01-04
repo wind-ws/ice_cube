@@ -2,6 +2,7 @@ import { Store } from "@tauri-apps/plugin-store";
 import { StoreFile, StoreValue } from "../store";
 import { TranslateType, translate, use_translate_audio_url } from "../translation";
 import { Option, none, some } from "../../tool/option";
+import { get_random_int } from "../../tool/random";
 
 // 翻译缓存
 // 每次翻译都更新存储缓存,保证翻译是最新数据
@@ -27,10 +28,13 @@ export const store_translation_buffer: {
 } = {
    value: new StoreValue(store, default_key, () => ({}), true, false, false),
    get_translation(word_name: string): Option<TranslateType> {
-      this.updata(word_name)
       if (this.value.value[word_name] == undefined) {
+         this.updata(word_name)
          return none()
       } else {
+         if(get_random_int(0,10)==0){//随缘更新(单词翻译变化的可能性太低,所以这样随缘更新新数据)
+            this.updata(word_name)
+         }
          return some({
             ...this.value.value[word_name],
             audio: new Howl({

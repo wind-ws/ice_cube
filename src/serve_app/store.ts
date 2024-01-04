@@ -51,6 +51,8 @@ export class StoreValue<V extends object> {
       auto_save: boolean,
       auto_log: boolean
    }
+   private _cycle_time_save: number = 0;// 0 表示不执行周期自动存储
+   private _cycle_time_id;
    // app的所有key都在这里,且它是用来判断 所有的文件是否已经加载到内存,是否已经加载到当前的_value里
    // key:true 就是当前key加载完成, key:false 就是当前key没有加载完成
    public static load_progress: { [key: string]: boolean } = {};
@@ -65,7 +67,8 @@ export class StoreValue<V extends object> {
    }
 
    constructor(store: Store, key: string, _default: Default<V>,
-      auto_set: boolean = true, auto_save: boolean = false, auto_log: boolean = true) {
+      auto_set: boolean = true, auto_save: boolean = false, auto_log: boolean = true,
+      cycle_time_save: number = 0) {
       StoreValue.load_progress[key] = false;//开始加载
       this._store = store;
       this._key = key;
@@ -76,6 +79,11 @@ export class StoreValue<V extends object> {
          auto_set,
          auto_save,
          auto_log
+      }
+      if(cycle_time_save!=0){
+         this._cycle_time_id = setInterval(()=>{
+            this.save();
+         },cycle_time_save);
       }
       this._value = createDeepProxy(_default(), (v) => this.ChangeHandler(v));
       this._store.get<V>(key).then(v => {//自动加载
@@ -120,31 +128,31 @@ export class StoreValue<V extends object> {
       }
    }
 
-   public auto_set_on(){
+   public auto_set_on() {
       this.auto_set = true;
    }
-   public auto_set_off(){
+   public auto_set_off() {
       this.auto_set = false;
    }
-   public auto_set_default(){
+   public auto_set_default() {
       this.auto_set = this.auto_init.auto_set;
    }
-   public auto_log_on(){
+   public auto_log_on() {
       this.auto_log = true;
    }
-   public auto_log_off(){
+   public auto_log_off() {
       this.auto_log = false;
    }
-   public auto_log_default(){
+   public auto_log_default() {
       this.auto_log = this.auto_init.auto_log;
    }
-   public auto_save_on(){
+   public auto_save_on() {
       this.auto_save = true;
    }
-   public auto_save_off(){
+   public auto_save_off() {
       this.auto_save = false;
    }
-   public auto_save_default(){
+   public auto_save_default() {
       this.auto_save = this.auto_init.auto_save;
    }
 
