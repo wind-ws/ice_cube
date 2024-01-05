@@ -31,11 +31,17 @@ export default defineConfig(async () => ({
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/translation_text/, ""),
          },
+         "/iciba_translation_text":{
+            target: "https://www.iciba.com/_next/data/dTlbEbttstfo-ZBl63u0M/word.json",
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/iciba_translation_text/, ""),
+         },
          "/translation_audio": {
             target: "https://dict.youdao.com/dictvoice",
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/translation_audio/, ""),
          },
+
          
       },
    }

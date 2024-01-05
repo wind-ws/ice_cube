@@ -19,33 +19,45 @@ type StoreTranslationBuffer = {
 
 export const store_translation_buffer: {
    value: StoreValue<StoreTranslationBuffer>,
+   audio_buffer: { [word_name: string]: Howl },
    get_translation(word_name: string): Option<TranslateType>,
    /**
     * 更新单词的信息
     * @param word_name 
     */
-   updata(word_name:string):void,
+   updata(word_name: string): void,
 } = {
    value: new StoreValue(store, default_key, () => ({}), true, false, false),
+   audio_buffer: {},
    get_translation(word_name: string): Option<TranslateType> {
       if (this.value.value[word_name] == undefined) {
          this.updata(word_name)
          return none()
       } else {
-         if(get_random_int(0,10)==0){//随缘更新(单词翻译变化的可能性太低,所以这样随缘更新新数据)
+         if (get_random_int(0, 500) == 0) {//随缘更新(单词翻译变化的可能性太低,所以这样随缘更新新数据)
             this.updata(word_name)
          }
-         return some({
-            ...this.value.value[word_name],
-            audio: new Howl({
+         if (this.audio_buffer[word_name] == undefined) {
+            this.audio_buffer[word_name] = new Howl({
                src: use_translate_audio_url(word_name),
                format: "mpeg",
                preload: true,
             })
+         }
+         return some({
+            ...this.value.value[word_name],
+            audio: this.audio_buffer[word_name]
          })
       }
    },
-   updata(word_name:string):void{
+   updata(word_name: string): void {
+      if (this.audio_buffer[word_name] == undefined) {
+         this.audio_buffer[word_name] = new Howl({
+            src: use_translate_audio_url(word_name),
+            format: "mpeg",
+            preload: true,
+         })
+      }
       translate(word_name).then(v => {
          this.value.value[word_name] = {//更新翻译数据
             word: v.word,

@@ -17,22 +17,26 @@ const ComModalReciteSetting = ({ placement, isOpen, onOpenChange }: Props) => {
    const [is_auto_pronunciation, set_is_auto_pronunciation] =
       useState(() => store_setting.value.value.recite.is_auto_pronunciation);
    useEffect(() => {
-      store_setting.value.value.recite.is_auto_pronunciation = is_auto_pronunciation;
+      if (store_setting.value.value.recite.is_auto_pronunciation != is_auto_pronunciation)
+         store_setting.value.value.recite.is_auto_pronunciation = is_auto_pronunciation;
    }, [is_auto_pronunciation])
    const [is_listen_mode, set_is_listen_mode] =
       useState(() => store_setting.value.value.recite.is_listen_mode);
    useEffect(() => {
-      store_setting.value.value.recite.is_listen_mode = is_listen_mode;
+      if (store_setting.value.value.recite.is_listen_mode != is_listen_mode)
+         store_setting.value.value.recite.is_listen_mode = is_listen_mode;
    }, [is_listen_mode])
    const [is_auto_show, set_is_auto_show] =
       useState(() => store_setting.value.value.recite.is_auto_show);
    useEffect(() => {
-      store_setting.value.value.recite.is_auto_show = is_auto_show;
+      if (store_setting.value.value.recite.is_auto_show != is_auto_show)
+         store_setting.value.value.recite.is_auto_show = is_auto_show;
    }, [is_auto_show])
    const [auto_show_sec, set_auto_show_sec] =
       useState(() => store_setting.value.value.recite.auto_show_sec);
    useEffect(() => {
-      store_setting.value.value.recite.auto_show_sec = auto_show_sec;
+      if (store_setting.value.value.recite.auto_show_sec != auto_show_sec)
+         store_setting.value.value.recite.auto_show_sec = auto_show_sec;
    }, [auto_show_sec])
 
    return <Modal
@@ -60,7 +64,7 @@ const ComModalReciteSetting = ({ placement, isOpen, onOpenChange }: Props) => {
                         value={auto_show_sec}
                         onChange={(v) => Array.isArray(v) ? null : set_auto_show_sec(v)}
                         className="max-w-md"
-                     />:<></>
+                     /> : <></>
                   }
                </ModalBody>
                <ModalFooter>
