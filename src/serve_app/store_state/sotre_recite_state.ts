@@ -55,7 +55,7 @@ export const store_recite_state: {
    /// 获取翻译, none表示翻译未加载完成(map里还没有当前单词的翻译)
    get_translation(word_name: string): Option<TranslateType>,
 } = {
-   value: new StoreValue(store, default_key, default_recite_state,true,false,false),
+   value: new StoreValue(store, default_key, default_recite_state,false,false),
    // translation_map: {},
    index_translation: 0,
    over_load(book_name: string, filters: StoreFilter[]): void {

@@ -31,7 +31,7 @@ export const store_word_golbal: {
    /// 获得单词的note , 单词不存在则返回 "",并且初始化
    get_note(word: string): string,
 } = {
-   value: new StoreValue(store, default_key, () => ({})),
+   value: new StoreValue(store, default_key, () => ({}),false,false),
    set_note(word: string, note: string): void {
       maybe_init(word);
       store_word_golbal.value.value[word].note = note;

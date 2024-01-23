@@ -30,11 +30,13 @@ const ComReciteShow = ({ book_name, word_name, index, len, on_next_word }: Props
    const [word_mes, set_word_mes] = useState(() => store_book_data.get_book(book_name).get_mes(word_name))
    const [star, set_star] = useState(() => store_word_golbal.get_star(word_name));
    useEffect(() => {
-      store_word_golbal.set_star(word_name, star);
+      if (store_word_golbal.value.value[word_name].star != star)
+         store_word_golbal.set_star(word_name, star);
    }, [star]);
    const [note, set_note] = useState(() => store_word_golbal.get_note(word_name));
    useEffect(() => {
-      store_word_golbal.set_note(word_name, note);
+      if (store_word_golbal.value.value[word_name].note != note)
+         store_word_golbal.set_note(word_name, note);
    }, [note]);
 
    const [score_sub, set_score_sub] = useState(() => score_subtract(word_mes.score));
@@ -128,7 +130,7 @@ const ComReciteShow = ({ book_name, word_name, index, len, on_next_word }: Props
                   {
                      translation.match(v => v.means.map(v => <div key={v.part}
                         className="text-base my-1">
-                        <span className="text-slate-400">{v.part+" "}</span>
+                        <span className="text-slate-400">{v.part + " "}</span>
                         {v.means.join('')}
                      </div>),
                         () => [<p>等待翻译加载...</p>])

@@ -27,7 +27,7 @@ export const store_translation_buffer: {
     */
    updata(word_name: string): void,
 } = {
-   value: new StoreValue(store, default_key, () => ({}), true, false, false),
+   value: new StoreValue(store, default_key, () => ({}), true, false),
    audio_buffer: {},
    get_translation(word_name: string): Option<TranslateType> {
       if (this.value.value[word_name] == undefined) {

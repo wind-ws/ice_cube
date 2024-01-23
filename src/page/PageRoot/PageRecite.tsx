@@ -133,9 +133,9 @@ const PageRecite = () => {
    }
 
    const Going = () => {
-      const [show, set_show] = useState(()=>false);
+      const [show, set_show] = useState(() => false);
       const book_name = useRef(store_recite_state.value.value.book_name.unwrap());
-      
+
       return <div className="w-full h-full">
          {
             (() => {

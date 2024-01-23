@@ -55,7 +55,7 @@ const get_book_keys = async (): Promise<string[]> => {
 
 const new_StoreValue = (book_name: string, key: string) => {
    return new StoreValue<StoreBookData>(store, key,
-      () => default_store_book_data(book_name), true, false, false);//拒绝自动log(不然太卡了)
+      () => default_store_book_data(book_name), false, false);
 }
 
 /// 存储实体
@@ -179,9 +179,13 @@ export const store_book_data: {
             book.value.word_list[word] = set_first_time(book.value.word_list[word])
          },
          plus_word_yes(word: string): void {
+            console.warn("yes");
+            
             book.value.word_list[word].yes = book.value.word_list[word].yes + 1;
          },
          plus_word_no(word: string): void {
+            console.warn("no");
+            
             book.value.word_list[word].no = book.value.word_list[word].no + 1;
          },
          save(): void {
@@ -191,14 +195,13 @@ export const store_book_data: {
             return Object.keys(book.value.word_list).length;
          },
          star_len(): number {
-            store_word_golbal.value.auto_log_off();
             store_word_golbal.value.auto_set_off();
             const len = Object.keys(book.value.word_list)
-               .map(word => store_word_golbal.get_star(word))
+               // .map(word => store_word_golbal.get_star(word))//这个会导致性能问题, 重复且大量的触发 proxy 
+               .map(word => store_word_golbal.value.value_unproxy[word]!=undefined && store_word_golbal.value.value_unproxy[word].star)
                .filter(v => v).length;
-            store_word_golbal.value.auto_log_default();
             store_word_golbal.value.auto_set_default();
-            store_word_golbal.value.save();
+            // store_word_golbal.value.save();
             return len;
          },
          get_mes(word: string): BookWordMes {

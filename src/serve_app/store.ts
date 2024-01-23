@@ -42,7 +42,8 @@ type Default<T> = () => T;
 export class StoreValue<V extends object> {
    private _store: Store;
    private _key: string;//它的key
-   private _value: V;//sotre中实际存储的值
+   private _value: V;//sotre中实际存储的值 , 所有set使用它
+   private _value_unproxy: V;// 不被proxy的存储值,所有get使用它,
    private auto_set: boolean;//修改value是否自动存储到store,默认自动存储
    private auto_save: boolean;//修改value是否自动存储到磁盘,默认不自动存储
    private auto_log: boolean;//修改value是否自动输出log,默认自动输出log
@@ -80,48 +81,52 @@ export class StoreValue<V extends object> {
          auto_save,
          auto_log
       }
-      if(cycle_time_save!=0){
-         this._cycle_time_id = setInterval(()=>{
+      if (cycle_time_save != 0) {
+         this._cycle_time_id = setInterval(() => {
             this.save();
-         },cycle_time_save);
+         }, cycle_time_save);
       }
-      this._value = createDeepProxy(_default(), (v) => this.ChangeHandler(v));
+      this._value_unproxy = _default();
+      this._value = createDeepProxy(this._value_unproxy, (v) => this.ChangeHandler(v));
       this._store.get<V>(key).then(v => {//自动加载
          if (!v) {//值不存在,初始化sotre
-            store.set(key, this._value);
+            store.set(key, this._value_unproxy);
          } else {
-            this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));
+            this._value_unproxy = v;
+            this._value = createDeepProxy(this._value_unproxy, (v) => this.ChangeHandler(v));
          }
          StoreValue.load_progress[key] = true;//加载完成
       });
    }
 
    get key(): string { return this._key }
+   get value_unproxy(): V { return this._value_unproxy }
    get value(): V { return this._value }
    set value(v: V) {
-      this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));
+      this._value_unproxy = v;
+      this._value = createDeepProxy(this._value_unproxy, (v) => this.ChangeHandler(v));
       if (this.auto_log) {
          console.log(`此key<${this._key}>整体内容完全被修改,修改内容如下:`);
          console.log(v);
       }
       if (this.auto_set) {
-         this._store.set(this._key, this._value);
+         this._store.set(this._key, this._value_unproxy);
       }
       if (this.auto_save) {
          this.save();
       }
    }
    public save() {
-      this._store.set(this._key, this._value);
+      this._store.set(this._key, this._value_unproxy);
       this._store.save();
    }
    private ChangeHandler(updatedObject: V) {
       if (this.auto_log) {
-         console.log(`此key<${this._key}>内容被修改,修改内容如下:`);
-         console.log(updatedObject);
+         console.warn(`此key<${this._key}>内容被修改,修改内容如下:`);
+         console.warn(updatedObject);
       }
       if (this.auto_set) {
-         this._store.set(this._key, this._value);
+         this._store.set(this._key, this._value_unproxy);
       }
       if (this.auto_save) {
          this.save();
