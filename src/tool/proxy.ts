@@ -5,7 +5,7 @@
 /// 再次学习参考的文档:
 /// https://www.cnblogs.com/fqh123/p/16340077.html
 
-import { Option } from "./option";
+import { Option, none, some } from "./option";
 import { Result } from "./result";
 
 /// 创建一个具有标识的Proxy

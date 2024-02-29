@@ -161,7 +161,7 @@ export const store_book_data: {
             this.save();
          },
          get_all_word_mes(): WordList {
-            return book.value.word_list
+            return book.value_unproxy.word_list
          },
          delete_word(word: string): void {
             delete book.value.word_list[word];
@@ -179,14 +179,10 @@ export const store_book_data: {
             book.value.word_list[word] = set_first_time(book.value.word_list[word])
          },
          plus_word_yes(word: string): void {
-            console.warn("yes");
-            
-            book.value.word_list[word].yes = book.value.word_list[word].yes + 1;
+            book.value.word_list[word].yes = book.value_unproxy.word_list[word].yes + 1;
          },
          plus_word_no(word: string): void {
-            console.warn("no");
-            
-            book.value.word_list[word].no = book.value.word_list[word].no + 1;
+            book.value.word_list[word].no = book.value_unproxy.word_list[word].no + 1;
          },
          save(): void {
             book.save();
@@ -198,7 +194,8 @@ export const store_book_data: {
             store_word_golbal.value.auto_set_off();
             const len = Object.keys(book.value.word_list)
                // .map(word => store_word_golbal.get_star(word))//这个会导致性能问题, 重复且大量的触发 proxy 
-               .map(word => store_word_golbal.value.value_unproxy[word]!=undefined && store_word_golbal.value.value_unproxy[word].star)
+               .map(word => store_word_golbal.value.value_unproxy[word]!=undefined 
+                  && store_word_golbal.value.value_unproxy[word].star)
                .filter(v => v).length;
             store_word_golbal.value.auto_set_default();
             // store_word_golbal.value.save();

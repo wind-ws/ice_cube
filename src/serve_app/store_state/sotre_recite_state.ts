@@ -72,7 +72,7 @@ export const store_recite_state: {
       this.value.value.word_list = filters_word_list(this.value.value.filters.map(v => store_filter.get_filter(v).unwrap()
       ), this.value.value.word_list);
       // 过滤后,随机打乱
-      this.value.value.word_list = this.value.value.word_list.sort((a, b) => (get_random_int(0, 1) ? -1 : 1));
+      this.value.value.word_list = this.value.value_unproxy.word_list.sort((a, b) => (get_random_int(0, 1) ? -1 : 1));
       this.load_translation_map(15); //加载15个翻译结果
    },
    load(): void {

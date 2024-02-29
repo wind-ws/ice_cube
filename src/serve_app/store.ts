@@ -48,9 +48,9 @@ export class StoreValue<V extends object> {
    private auto_save: boolean;//修改value是否自动存储到磁盘,默认不自动存储
    private auto_log: boolean;//修改value是否自动输出log,默认自动输出log
    private auto_init: {// 所有auto的初始值, 通过构造函数的初始值,构造后这个值不可修改
-      auto_set: boolean,
-      auto_save: boolean,
-      auto_log: boolean
+      readonly auto_set: boolean,
+      readonly auto_save: boolean,
+      readonly auto_log: boolean
    }
    private _cycle_time_save: number = 0;// 0 表示不执行周期自动存储
    private _cycle_time_id;
@@ -92,7 +92,8 @@ export class StoreValue<V extends object> {
          if (!v) {//值不存在,初始化sotre
             store.set(key, this._value_unproxy);
          } else {
-            this._value_unproxy = v;
+            this._value = createDeepProxy(v, (v) => this.ChangeHandler(v));//利用它去初始化Option和Result
+            this._value_unproxy = {...this._value};
             this._value = createDeepProxy(this._value_unproxy, (v) => this.ChangeHandler(v));
          }
          StoreValue.load_progress[key] = true;//加载完成
@@ -101,6 +102,9 @@ export class StoreValue<V extends object> {
 
    get key(): string { return this._key }
    get value_unproxy(): V { return this._value_unproxy }
+   // get unsafe_value_unproxy(): V { return this._value_unproxy }
+   /// ! 注意 : 修改 unsafe_value_unproxy 不会触发proxy 
+   // set unsafe_value_unproxy(v: V){}
    get value(): V { return this._value }
    set value(v: V) {
       this._value_unproxy = v;
