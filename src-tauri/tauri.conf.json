@@ -1,46 +1,35 @@
 {
+    "productName": "ice_cube",
+    "version": "0.0.0",
+    "identifier": "com.tauri.dev",
     "build": {
         "beforeDevCommand": "yarn dev",
+        "devUrl": "http://localhost:1420",
         "beforeBuildCommand": "yarn build",
-        "devPath": "http://localhost:1420",
-        "distDir": "../dist"
+        "frontendDist": "../dist"
     },
-    "package": {
-        "productName": "ice_cube",
-        "version": "0.0.1"
-    },
-    "tauri": {
-        "bundle": {
-            "active": true,
-            "targets": "all",
-            "identifier": "com.tauri.build",
-            "icon": [
-                "icons/32x32.png",
-                "icons/128x128.png",
-                "icons/128x128@2x.png",
-                "icons/icon.icns",
-                "icons/icon.ico"
-            ]
-        },
-        "security": {
-            "csp": null
-        },
+    "app": {
         "windows": [
             {
-                "fullscreen": false,
-                "resizable": true,
                 "title": "ice_cube",
                 "width": 800,
                 "height": 600
             }
-        ]
-    },
-    "plugins": {
-        "shell": {
-            "open": true
-        },
-        "http": {
-            "scope": ["http://**", "https://**"]
+        ],
+        "security": {
+            "csp": null
         }
+    },
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ]
     }
+    
 }

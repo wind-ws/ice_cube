@@ -1,15 +1,17 @@
 
 
+/// todo 用的时候在做
 
 type ResultMark = "Ok" | "Err";
-type _Result<T, E> =
+type Result<T, E> =
    | ["Ok", T]
    | ["Err", E];
-export const ok = <T, E>(value: T): Result<T, E> => new Result<T, E>(["Ok", value]);
-export const err = <T, E>(value: E): Result<T, E> => new Result<T, E>(["Err", value]);
-export class Result<T, E> {
-   private _value_result: _Result<T, E>;
-   constructor(value: _Result<T, E>) {
+const ok = <T, E>(value: T): __Result<T, E> => new __Result<T, E>(["Ok", value]);
+const err = <T, E>(value: E): __Result<T, E> => new __Result<T, E>(["Err", value]);
+
+class __Result<T, E> {
+   private _value_result: Result<T, E>;
+   constructor(value: Result<T, E>) {
       this._value_result = value;
    }
    public match<R>(ok: (value: T) => R, err: (value: E) => R): R {

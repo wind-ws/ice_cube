@@ -3,29 +3,25 @@ name = "ice_cube"
 version = "0.0.0"
 description = "A Tauri App"
 authors = ["you"]
-license = ""
-repository = ""
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 name = "ice_cube_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
+crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-alpha", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-alpha", features = [] }
-tauri-plugin-window = "2.0.0-alpha"
-tauri-plugin-shell = "2.0.0-alpha"
-tauri-plugin-store = "2.0.0-alpha"
-
-serde_json = "1.0"
-tauri-plugin-http = "2.0.0-alpha.8"
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-plugin-shell = "2.0.0-beta"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace",version = "2.0.0-beta.3",branch = "v2" }
+tauri-plugin-http = "2.0.0-beta.2"
 
 [features]
-# this feature is used for production builds or when `devPath` points to the filesystem
-# DO NOT REMOVE!!
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
