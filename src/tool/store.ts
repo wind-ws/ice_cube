@@ -17,7 +17,7 @@ export enum StoreFile {
    Filter = "filter.json", //存储过滤器的数据
    Time = "time.json", //存储耗时记录的数据
    Setting = "setting.json", //存储设置的数据
-   TranslationButter = "translation_butter.json", //翻译缓存存储的数据
+   // TranslationButter = "translation_butter.json", //翻译缓存存储的数据
    State = "state.json", //存储应用状态, 非数据
 }
 
@@ -27,8 +27,14 @@ export enum StoreFile {
  */
 export class StoreValue<V extends object> {
    private store: Store;
-   private store_id: StoreFile;
-   private data: V;
+   private _store_id: StoreFile;
+   get store_id() {
+      return this._store_id
+   }
+   private _data: V;
+   get data() {
+      return this._data
+   }
    //@ts-ignore
    private default_data: () => V;
    private share;
@@ -50,21 +56,25 @@ export class StoreValue<V extends object> {
       return b;
    }
 
+   public static f() {
+
+   }
+
    constructor(store_id: StoreFile, default_value: () => V) {
       StoreValue.load_list[store_id] = false;
-      this.store_id = store_id;
+      this._store_id = store_id;
       this.default_data = default_value;
       this.store = new Store(store_id);
-      this.data = default_value();
+      this._data = default_value();
       // this.delete_store();// 删除所有存储数据
-      this.store.get<V>(this.store_id)
+      this.store.get<V>(this._store_id)
          .then(v => {
             if (v == null) {
-               this.store.set(store_id, this.data);
+               this.store.set(store_id, this._data);
             } else {
-               this.data = v;
+               this._data = v;
                this.share = createSharedComposable(() => {
-                  const [get, set] = createStore(this.data);
+                  const [get, set] = createStore(this._data);
                   return [get, set] as [get: V, set: SetStoreFunction<V>]
                })
             }
@@ -74,7 +84,7 @@ export class StoreValue<V extends object> {
          //不知道为什么, 刷新后,它不会为this.data套上代理(所以渲染不会同步到数据)
          //而再次热重载后,就套上代理了
          //应该是没事的,因为重启软件后,第一次是套上代理了
-         const [get, set] = createStore(this.data);
+         const [get, set] = createStore(this._data);
          return [get, set] as [get: V, set: SetStoreFunction<V>]
       })
    }
@@ -85,8 +95,8 @@ export class StoreValue<V extends object> {
    /**
     * !!! 不可在发布版本中使用!!!(这也只能在数据结构发生变化后,删除旧结构时使用)
     */
-   private delete_store(){
-      this.store.delete(this.store_id);
+   private delete_store() {
+      this.store.delete(this._store_id);
       this.save();
    }
    /**
@@ -94,21 +104,22 @@ export class StoreValue<V extends object> {
     * #abolish
     */
    private get_render() {
-      return createStore(this.data);
+      return createStore(this._data);
    }
    /** #abolish */
    private get(): V {
-      return this.data;
+      return this._data;
    }
    /** #abolish */
    private set(value: V) {
-      this.data = value;
-      this.store.set(this.store_id, this.data);
+      this._data = value;
+      this.store.set(this._store_id, this._data);
    }
+
    /** 磁盘存储  */
    public save() {
-      console.log(this.data);
-      this.store.set(this.store_id, this.data);
+      console.log(this._data);
+      this.store.set(this._store_id, this._data);
       this.store.save();
    }
    /** 磁盘存储 尼阻去抖 */

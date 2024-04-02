@@ -24,8 +24,15 @@ const ViewHome = () => {
             开始冒险
          </div>
          <div class=" btn " onclick={() => {
+            const [get, _] = store_setting.render();
             if (!mod_recite_state.is_recite_state()) {
                toast("不存在复习记录");
+               return
+            }
+            if (get.recite.book_name == null
+               || get.recite.book_name == ""
+               || get.recite.book_name != mod_recite_state.get_book_name()) {
+               toast("切换单词本后,记录会消失");
                return
             }
             mod_recite_state.load_recite_state();

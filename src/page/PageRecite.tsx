@@ -27,7 +27,7 @@ const PageRecite = () => {
    </div>
 }
 function Reciting() {
-   const [page, set_page] = createSignal<"invisible" | "visible">("invisible");
+   const [page, set_page] = createSignal<"invisible" | "visible">("visible");
    // const [setting, set_setting] = store_setting.render();
    const [state, set_state] = store_state.render();
    const [book, set_book] = store_book.render();
@@ -94,7 +94,7 @@ function Reciting() {
       </>
    }
    function TopBar() {
-      const [get,set] = store_setting.render();
+      const [get, set] = store_setting.render();
       return <div class="flex flex-row-reverse items-center px-4 gap-4 w-full h-full">
          <div class="btn btn-ghost p-0"
             onclick={(e) => {
@@ -132,30 +132,30 @@ function Reciting() {
                   <div class="form-control">
                      <label class="label cursor-pointer">
                         <span class="label-text">自动发音</span>
-                        <input type="checkbox" class="toggle" checked={get.recite.is_auto_pronunciation} 
-                        oninput={() => {
-                           set("recite","is_auto_pronunciation",!get.recite.is_auto_pronunciation)
-                        }} />
+                        <input type="checkbox" class="toggle" checked={get.recite.is_auto_pronunciation}
+                           oninput={() => {
+                              set("recite", "is_auto_pronunciation", !get.recite.is_auto_pronunciation)
+                           }} />
                      </label>
                   </div>
                   <div class="form-control">
                      <label class="label cursor-pointer">
                         <span class="label-text">听单词模式</span>
-                        <input type="checkbox" class="toggle" checked={get.recite.is_listen_mode} 
-                        oninput={() => {
-                           set("recite","is_listen_mode",!get.recite.is_listen_mode)
-                        }} />
+                        <input type="checkbox" class="toggle" checked={get.recite.is_listen_mode}
+                           oninput={() => {
+                              set("recite", "is_listen_mode", !get.recite.is_listen_mode)
+                           }} />
                      </label>
                   </div>
                   <div class="form-control">
                      <label class="label cursor-pointer">
                         <span class="label-text">自动展开</span>
-                        <input type="checkbox" class="toggle" checked={get.recite.is_auto_show} 
-                        oninput={() => {
-                           set("recite","is_auto_show",!get.recite.is_auto_show)
-                        }} />
+                        <input type="checkbox" class="toggle" checked={get.recite.is_auto_show}
+                           oninput={() => {
+                              set("recite", "is_auto_show", !get.recite.is_auto_show)
+                           }} />
                      </label>
-                  </div>                  
+                  </div>
                </div>
             </div>
             <form method="dialog" class="modal-backdrop">
@@ -217,22 +217,50 @@ function Reciting() {
 
             </div>
          </div>
-         <div class="flex flex-col flex-1 w-full bg-emerald-100">
-            <div class="flex w-full h-16 bg-lime-100 text-2xl justify-center items-center  font-semibold ">
+         <div class="flex flex-col flex-1 w-full">
+            <div class="flex w-full h-16  text-2xl justify-center items-center  font-semibold ">
                {word.word}
             </div>
             <div class="flex gap-x-2 px-4 w-full h-8 ">
                <Tags />
             </div>
-            <div class="flex justify-center w-full h-full bg-fuchsia-300">
-               <div class="carousel carousel-center w-full  p-4 space-x-4  rounded-box scroll-auto">
+            <div class="flex justify-center w-full h-full">
+               <div class="carousel carousel-center w-full  p-4 space-x-4 rounded-box scroll-auto">
                   <div class="carousel-item w-[82%] rounded-box p-4 glass ">
                      123
                   </div>
-                  <div id="center" class="carousel-item w-[82%] p-4 glass rounded-box ">
+                  <div id="center" class="carousel-item w-[82%] p-4 glass rounded-box  overflow-auto">
                      {
                         option_fn(global[word.word].translation).match(v => {
-                           return v.paraphrase
+                           const word_name = v.word;
+                           const [global, _] = store_global.render();
+                           const related_word = global[word_name].related_word;
+                           // const relataed_word = global[word_name].;
+
+                           return <div class="flex flex-col w-full h-full ">
+                              <div class="flex flex-col w-full h-full">
+                                 {
+                                    v.means.map(v => <div class="flex  w-full">
+                                       <span class=" text-stone-500">{v.part}</span>
+                                       <div class="">
+                                          {
+                                             v.means.map(v => <>
+                                                {v} /
+                                             </>)
+                                          }
+                                       </div>
+                                    </div>)
+                                 }
+                              </div>
+                              关联词
+                              <div class="flex flex-col">
+                                 {related_word.map(v => v)}
+                              </div>
+                              变形
+                              <div class="flex flex-col">
+                                 
+                              </div>
+                           </div>
                         }, () => {
                            return "等待翻译加载"
                         })

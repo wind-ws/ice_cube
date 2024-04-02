@@ -6,8 +6,12 @@ import { createSignal } from 'solid-js'
 import { store_setting } from '../../tool/store/setting'
 import { useNavigate } from '@solidjs/router'
 import { translate } from '../../tool/translation'
+import { open } from '@tauri-apps/plugin-dialog';
+import { save } from '@tauri-apps/plugin-dialog';
+import { writeTextFile, readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 
 const ViewSetting = () => {
+
    return (<div class='flex flex-col place-items-center gap-y-6 
       px-4 py-8 w-full h-full'>
 
@@ -16,6 +20,9 @@ const ViewSetting = () => {
       </div>
       <div class='flex w-full'>
          <DataStatistics></DataStatistics>
+      </div>
+      <div class='flex w-full justify-center'>
+         当前版本: 0.3.0
       </div>
    </div>)
 }

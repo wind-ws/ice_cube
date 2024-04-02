@@ -3,8 +3,6 @@ import { random_int } from "./random";
 import { day, now } from "./time";
 import { store_global, store_global_fn } from "./store/book";
 import { word } from "./store/book";
-import { todo } from "./auxiliary_fn";
-import { StoreFile, StoreValue } from "./store";
 
 
 /// 这是一个存储类型

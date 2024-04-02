@@ -99,6 +99,13 @@ export namespace mod_recite_state {
       const [get, _] = store_state.render();
       return option_fn(get.recite_state).is_some()
    }
+   /** 获取状态中的单词本名 */
+   export function get_book_name(): string | null {
+      const [get, _] = store_state.render();
+      return option_fn(get.recite_state).match((v) => {
+         return v.book_name
+      }, () => null)
+   }
 
    /** 获取当前单词 */
    export function current_word(): Option<string> {

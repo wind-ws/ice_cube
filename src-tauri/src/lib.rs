@@ -7,6 +7,8 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_http::init()) //因为 官方配置文件的问题 暂时不能使用http, 等待官方的更新 https://github.com/tauri-apps/plugins-workspace/issues/1055
         .plugin(tauri_plugin_store::Builder::default().build())
