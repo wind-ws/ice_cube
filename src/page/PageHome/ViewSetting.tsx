@@ -9,17 +9,32 @@ import { translate } from '../../tool/translation'
 import { open } from '@tauri-apps/plugin-dialog';
 import { save } from '@tauri-apps/plugin-dialog';
 import { writeTextFile, readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { downloadDir } from '@tauri-apps/api/path';
+import { getVersion } from '@tauri-apps/api/app';
+import { invoke } from '@tauri-apps/api/core';
+import { export_data, version_0_3 } from '../../tool/data_import_export'
 
 const ViewSetting = () => {
 
    return (<div class='flex flex-col place-items-center gap-y-6 
       px-4 py-8 w-full h-full'>
-
+      
       <div class='flex w-full'>
          <BookFilterData></BookFilterData>
       </div>
       <div class='flex w-full'>
          <DataStatistics></DataStatistics>
+      </div>
+
+      <div class='btn' onclick={()=>{
+         export_data({file_name:"my_file"})
+      }}>
+         导出数据(至: */Download/IceCube/ )
+      </div>
+      <div class='btn' onclick={()=>{
+         version_0_3._import();
+      }}>
+         导入数据(todo)
       </div>
       <div class='flex w-full justify-center'>
          当前版本: 0.3.0

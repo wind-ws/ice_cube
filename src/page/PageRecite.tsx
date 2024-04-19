@@ -14,6 +14,8 @@ import { RiSystemDeleteBin4Line } from 'solid-icons/ri'
 import { useNavigate } from "@solidjs/router";
 import { createStore, produce } from "solid-js/store";
 import { createSign } from "crypto";
+import { FiStar } from 'solid-icons/fi'
+import { FaSolidStar } from "solid-icons/fa";
 
 const PageRecite = () => {
    const [state, set_state] = store_state.render();
@@ -27,11 +29,11 @@ const PageRecite = () => {
    </div>
 }
 function Reciting() {
-   const [page, set_page] = createSignal<"invisible" | "visible">("visible");
-   // const [setting, set_setting] = store_setting.render();
+   const [page, set_page] = createSignal<"invisible" | "visible">("invisible");
    const [state, set_state] = store_state.render();
    const [book, set_book] = store_book.render();
    const [global, set_global] = store_global.render();
+   const [setting, set_setting] = store_setting.render();
    const recite_state = option_fn(state.recite_state).unwrap();
    const book_name = recite_state.book_name;
    let [word, set_word] = createStore(option_fn(mod_recite_state.current_word())
@@ -51,6 +53,7 @@ function Reciting() {
             return null as unknown as word.Word;
          }))
       audio = get_audio(word.word);
+
    })
 
 
@@ -65,6 +68,7 @@ function Reciting() {
          </Match>
       </Switch>
    </div>
+
    function delete_word() {
 
    }
@@ -95,35 +99,53 @@ function Reciting() {
    }
    function TopBar() {
       const [get, set] = store_setting.render();
-      return <div class="flex flex-row-reverse items-center px-4 gap-4 w-full h-full">
-         <div class="btn btn-ghost p-0"
-            onclick={(e) => {
-               (document.getElementById('modal_setting') as any)?.showModal()
-               e.stopPropagation();
-            }}>
-            <RiSystemSettingsLine class=" text-2xl" />
+      return <div class="flex flex-row-reverse items-center justify-between px-4 gap-4 w-full h-full">
+         <div class="flex gap-2">
+            <div class="btn btn-ghost p-0"
+               onclick={(e) => {
+                  set_global(word.word, produce(v => {
+                     v.star = !v.star;
+                  }));
+                  e.stopPropagation();
+               }}>
+               {
+                  global[word.word].star ?
+                     <FaSolidStar class=" text-2xl text-amber-400" />
+                     : <FiStar class=" text-2xl text-amber-400" />
+               }
+            </div>
+            <div class="btn btn-ghost p-0"
+               onclick={(e) => {
+                  (document.getElementById('modal_setting') as any)?.showModal()
+                  e.stopPropagation();
+               }}>
+               <RiSystemSettingsLine class=" text-2xl" />
+            </div>
+
          </div>
-         <div class="btn btn-ghost p-0"
-            onclick={(e) => {
-               batch(() => {
-                  const word_name = word.word;
-                  if (recite_state.index + 1 == recite_state.list.length) {
-                     //复习完成,清空状态
-                     mod_recite_state.clear_recite_state()
-                  } else {
-                     set_state("recite_state", produce(v => {
-                        option_fn(v).match((v) => {
-                           v.index = v.index + 1;
-                        }, () => { })
-                     }));
-                  }
-                  store_book_fn.delete_word(book_name, word_name);
-                  store_state.save_debounced_fn();
-                  store_book.save_debounced_fn();
-               })
-               e.stopPropagation();
-            }}>
-            <RiSystemDeleteBin4Line class=" text-2xl text-red-400" />
+         <div class="flex">
+            <div class="btn btn-ghost p-0"
+               onclick={(e) => {
+                  batch(() => {
+                     const word_name = word.word;
+                     if (recite_state.index + 1 == recite_state.list.length) {
+                        //复习完成,清空状态
+                        mod_recite_state.clear_recite_state()
+                     } else {
+                        set_state("recite_state", produce(v => {
+                           option_fn(v).match((v) => {
+                              v.index = v.index + 1;
+                           }, () => { })
+                        }));
+                     }
+                     store_book_fn.delete_word(book_name, word_name);
+                     store_state.save_debounced_fn();
+                     store_book.save_debounced_fn();
+                  })
+                  e.stopPropagation();
+               }}>
+               <RiSystemDeleteBin4Line class=" text-2xl text-red-400" />
+            </div>
          </div>
          <dialog id="modal_setting" class="modal">
             <div class="modal-box" onclick={(e) => { e.stopPropagation() }}>
@@ -167,12 +189,28 @@ function Reciting() {
 
    function Invisible() {
       onMount(() => {
+         if (setting.recite.is_auto_pronunciation) {
+            if(audio.playing()){
+               audio.stop();
+            }
+            audio.play();
+         }
          store_global_fn.load_translation(word.word)
       })
       return <div class="flex flex-col h-screen w-full"
          onclick={() => { // 点击空白处 发音
+            if (audio.playing()) {
+               audio.stop();
+            }
             audio.play()
-         }}>
+         }}
+         ondblclick={(e) => {
+            set_global(word.word, produce(v => {
+               v.star = !v.star;
+            }));
+            e.stopPropagation();
+         }}
+      >
          <div class="flex flex-col flex-initial h-20 w-full ">
             <div class="flex w-full">
                <Progress />
@@ -205,16 +243,33 @@ function Reciting() {
       const minus_score = store_book_fn.minus_score(word.score);
 
       onMount(() => {
+         if (setting.recite.is_auto_pronunciation) {
+            if(audio.playing()){
+               audio.stop();
+            }
+            audio.play();
+         }
          document.getElementById("center")?.scrollIntoView({ behavior: "instant" });
       })
       return <div class="flex flex-col h-screen w-full"
          onclick={() => { // 点击空白处 发音
+            if (audio.playing()) {
+               audio.stop();
+            }
             audio.play()
-         }}>
-         <div class="flex flex-initial h-20 w-full bg-zinc-400">
-            <Progress />
-            <div class="flex ">
-
+         }}
+         ondblclick={() => {
+            set_global(word.word, produce(v => {
+               v.star = !v.star;
+            }))
+         }}
+      >
+         <div class="flex flex-col flex-initial h-20 w-full ">
+            <div class="flex w-full">
+               <Progress />
+            </div>
+            <div class="flex w-full h-full">
+               <TopBar />
             </div>
          </div>
          <div class="flex flex-col flex-1 w-full">
@@ -258,7 +313,7 @@ function Reciting() {
                               </div>
                               变形
                               <div class="flex flex-col">
-                                 
+
                               </div>
                            </div>
                         }, () => {

@@ -25,7 +25,13 @@ export namespace word {
       */
       related_word: string[],
       star: boolean,// 重点关注 
-      label: string[],//标签
+      /**
+       * 标签
+       * 预设标签(不可删除(嘿嘿,强制让大家使用),用于共享数据时的标签同步约定): 
+       *    #phrase #idiom #sentence
+       *    (可删除): #v #n #adj #adv
+       */
+      label: string[],
       /** 自定义翻译结果,在显示翻译时,会自动添加到显示结果中 */
       custom_translation: {
          [part: string]: string[]
@@ -72,6 +78,7 @@ export namespace word {
          first_time: 0
       }
    }
+
 
 
 }
