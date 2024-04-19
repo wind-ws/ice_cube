@@ -12,7 +12,7 @@ import { writeTextFile, readTextFile, BaseDirectory } from '@tauri-apps/plugin-f
 import { downloadDir } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
 import { invoke } from '@tauri-apps/api/core';
-import { export_data, version_0_3 } from '../../tool/data_import_export'
+import { export_data, import_data } from '../../tool/data_import_export'
 
 const ViewSetting = () => {
 
@@ -27,12 +27,12 @@ const ViewSetting = () => {
       </div>
 
       <div class='btn' onclick={()=>{
-         export_data({file_name:"my_file"})
+         export_data({file_name:"my_export"})
       }}>
          导出数据(至: */Download/IceCube/ )
       </div>
       <div class='btn' onclick={()=>{
-         version_0_3._import();
+         import_data()
       }}>
          导入数据(todo)
       </div>
