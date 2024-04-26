@@ -15,10 +15,11 @@ export enum StoreFile {
    BookData = "book_data.json", //存储每个单词本的数据
    BookGolbal = "book_golbal.json", //存储所有单词共有的数据,不受单词本的影响
    Filter = "filter.json", //存储过滤器的数据
-   Time = "time.json", //存储耗时记录的数据
+   // Time = "time.json", //存储耗时记录的数据
    Setting = "setting.json", //存储设置的数据
    // TranslationButter = "translation_butter.json", //翻译缓存存储的数据
    State = "state.json", //存储应用状态, 非数据
+   History = "history.json", //记录一起历史记录
 }
 
 

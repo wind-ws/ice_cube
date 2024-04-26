@@ -13,7 +13,7 @@ import { now } from "solidjs-use";
 /**
  * 存储需要保持的状态信息
  */
-type StoreState = {
+export type StoreState = {
    /** 背诵的记录状态保持 */
    recite_state: Option<mod_recite_state.ReciteState>,
 }

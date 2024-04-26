@@ -13,6 +13,7 @@ import { downloadDir } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
 import { invoke } from '@tauri-apps/api/core';
 import { export_data, import_data } from '../../tool/data_import_export'
+import toast from 'solid-toast'
 
 const ViewSetting = () => {
 
@@ -28,13 +29,14 @@ const ViewSetting = () => {
 
       <div class='btn' onclick={()=>{
          export_data({file_name:"my_export"})
+         toast.success("导出成功")
       }}>
          导出数据(至: */Download/IceCube/ )
       </div>
       <div class='btn' onclick={()=>{
          import_data()
       }}>
-         导入数据(todo)
+         导入数据(非保守)
       </div>
       <div class='flex w-full justify-center'>
          当前版本: 0.3.0

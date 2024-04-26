@@ -5,7 +5,7 @@ import { produce } from "solid-js/store"
 
 
 
-type StoreSetting = {
+export type StoreSetting = {
    recite: {
       /// true:自动发音
       is_auto_pronunciation: boolean,

@@ -14,7 +14,7 @@ export default () => {
 
 
 
-   return <Router root={PageRoot} >
+   return <Router root={PageRoot}>
       <Route path="/loading" component={PageLoading}></Route>
       <Route path={["/","/home"]} component={PageHome} ></Route>
       <Route path="/add_word/:book_name" component={PageAddWord}></Route>
