@@ -3,10 +3,14 @@ import { StoreFilter } from "../filter"
 import { todo } from "../auxiliary_fn"
 import { produce } from "solid-js/store"
 
-
+import { Option, none } from "../option"
 
 export type StoreSetting = {
    recite: {
+      /** 选择的单词书名 */
+      book_name: string,
+      /** 选择的过滤器名列表 */
+      filter_name_list: string[],
       /// true:自动发音
       is_auto_pronunciation: boolean,
       /// true:听单词模式 (hide界面会隐藏单词本身)
@@ -15,15 +19,45 @@ export type StoreSetting = {
       is_auto_show: boolean,
       /// 当is_auto_show=true时,倒计时auto_show_sec秒后自动进入show界面
       auto_show_sec: number,
-      /** 选择的单词书名 */
-      book_name: string,
-      /** 选择的过滤器名列表 */
-      filter_name_list: string[],
+      /** 拼写模式 */
+      spelling: boolean,
+
    },
    /** 所有的过滤器 */
    filters: {
       [filter_name: string]: StoreFilter
    },
+   api: {
+      /** 使用中的发音api ,the value is audio_api_name */
+      use_audio_url: Option<string>,
+      /** 获取单词发音的api 
+       * 和 translation_word_url 类似的
+      */
+      audio_url: {
+         [audio_api_name: string]: {
+            url: string,//api地址
+            word: never,//必要的,不可被覆盖
+            other_options: {
+               [_: string]: string
+            }
+         }
+      },
+      /** 使用中的翻译api, the value is translation_word_api_name */
+      use_translation_word_url: Option<string>
+      /** 获取单词翻译的api 
+       * 提取 "${word}"(必要的,),"${key}"(自定义的),"${any name}"(会进行分析提取,出现输入框) 进行替换, 
+       * 例如:"http://abc?word=${word}"
+      */
+      translation_word_url: {
+         [translation_word_api_name: string]: {
+            url: string,//api地址
+            word: never,//必要的,不可被覆盖
+            other_options: {
+               [_: string]: string
+            }
+         }
+      }
+   }
    /** 存在的标签 */
    readonly label: string[],
 }
@@ -36,9 +70,16 @@ const default_store_setting = (): StoreSetting => {
          is_auto_show: false,
          auto_show_sec: 4,
          book_name: "",
-         filter_name_list: []
+         filter_name_list: [],
+         spelling: false
       },
       filters: {},
+      api: {
+         use_audio_url: none(),
+         audio_url: {},
+         use_translation_word_url: none(),
+         translation_word_url: {},
+      },
       label: []
    }
 }
@@ -55,7 +96,7 @@ export const set_label_for_setting = (label: string) => {
 }
 
 export namespace setting_recite_fn {
-   
+
    /** 切换单词本, 要把背诵状态清空 */
    export function set_book() {
 

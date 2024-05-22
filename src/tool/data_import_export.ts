@@ -1,7 +1,7 @@
 // 数据导入导出
 
 import { fetch } from "@tauri-apps/plugin-http";
-import { save_export_file } from "./fs";
+import { read_file, save_export_file } from "./fs";
 import { StoreBookData, StoreGlobalWordData, store_book, store_global } from "./store/book";
 import { StoreSetting, set_label_for_setting, store_setting } from "./store/setting";
 import { StoreState, store_state } from "./store/state";
@@ -93,8 +93,12 @@ async function select_import_file(): Promise<Data> {
    console.log(file);
    
    const path: string = file?.path as any;
+   // await read_file(path);
+
    const a = await readTextFile(path);
    const data: Data = JSON.parse(a);
+
+   
    return data;
 }
 

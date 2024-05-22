@@ -21,3 +21,12 @@ export function save_export_file(file_name: string, data: Data) {
    save_file_to_download(file_name, json);
 }
 
+export async function read_file(file_path: string): Promise<string>{
+   console.log("invoke read_file");
+   
+   const s :string= await invoke("read_file",
+      { filePath: file_path});
+   console.log(s);
+      
+   return s;
+}

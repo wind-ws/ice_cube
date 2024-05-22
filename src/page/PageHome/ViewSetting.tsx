@@ -34,9 +34,9 @@ const ViewSetting = () => {
          导出数据(至: */Download/IceCube/ )
       </div>
       <div class='btn' onclick={()=>{
-         import_data()
+         // import_data()// 等待Android13的权限问题修复
       }}>
-         导入数据(非保守)
+         导入数据(非保守)(暂时无效)
       </div>
       <div class='flex w-full justify-center'>
          当前版本: 0.3.0

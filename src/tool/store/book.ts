@@ -92,7 +92,7 @@ export namespace store_global_fn {
    /** 
     * ! 不安全函数! 不可在发布中使用它 ! 只能用于开发时
     */
-   export function unsafe_delete_add_word() {
+   export function unsafe_delete_all_word() {
       const [get_global, set_global] = store_global.render();
       batch(() => {
          Object.keys(get_global).forEach(v => {

@@ -25,6 +25,18 @@ fn save_file_to_downlaod(file_name: &str, str: &str) {
     let mut file = File::create(&file_path).unwrap();
     file.write_all(str.as_bytes()).unwrap();
 }
+#[tauri::command]
+fn read_file(file_path:&str)->String{
+    let mut s = String::new();
+    if cfg!(target_os = "android") {
+        s= fs::read_to_string(file_path).expect("wcwcwcwc");
+    } else if cfg!(target_os = "ios") {
+        todo!();
+    } else {
+        panic!("expected target os")
+    };
+    s
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -35,7 +47,7 @@ pub fn run() {
         .plugin(tauri_plugin_http::init()) //因为 官方配置文件的问题 暂时不能使用http, 等待官方的更新 https://github.com/tauri-apps/plugins-workspace/issues/1055
         .plugin(tauri_plugin_store::Builder::default().build())
         // .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![save_file_to_downlaod])
+        .invoke_handler(tauri::generate_handler![save_file_to_downlaod,read_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
