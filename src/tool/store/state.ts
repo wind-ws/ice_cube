@@ -176,7 +176,9 @@ export namespace mod_recite_state {
       store_book.save_debounced_fn();
    }
    /** 表示执行 "不认识" 需要的数据处理
-    *  获取score进行需要的数据处理 */
+    *  获取score进行需要的数据处理 
+    *  score<0
+    * */
    export function no(score: number, word_name: string, book_name: string) {
       const [book, set_book] = store_book.render();
       set_book(book_name, "word_list", produce(t => {
